@@ -30,15 +30,17 @@ class ResponseSignerTest extends KernelTestCase
 
     public function testGetRegistrationSignature(): void
     {
+        $appSecret = 'secret';
+
         $expectedSignature = hash_hmac(
             'sha256',
             $this->shop->getId() . $this->shop->getUrl() . $this->metaData->getName(),
-            $this->shop->getShopSecret()
+            $appSecret
         );
 
         static::assertEquals(
             $expectedSignature,
-            $this->requestSigner->getRegistrationSignature($this->shop)
+            $this->requestSigner->getRegistrationSignature($this->shop, $appSecret)
         );
     }
 

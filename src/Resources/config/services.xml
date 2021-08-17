@@ -28,7 +28,7 @@
         </service>
 
         <service id="Shopware\AppBundle\Registration\ShopSecretGeneratorInterface"
-                 class="Shopware\AppBundle\Registration\RandomNumberShopSecretGenerator"/>
+                 class="Shopware\AppBundle\Registration\RandomStringShopSecretGenerator"/>
 
         <service id="Shopware\AppBundle\Shop\ShopRepositoryInterface"
                  class="Shopware\AppBundle\Shop\EmptyShopRepository"/>

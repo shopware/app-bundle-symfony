@@ -13,9 +13,9 @@ class ResponseSigner
     ) {
     }
 
-    public function getRegistrationSignature(ShopEntity $shop): string
+    public function getRegistrationSignature(ShopEntity $shop, string $appSecret): string
     {
-        return $this->sign($shop->getId() . $shop->getUrl() . $this->metadata->getName(), $shop->getShopSecret());
+        return $this->sign($shop->getId() . $shop->getUrl() . $this->metadata->getName(), $appSecret);
     }
 
     public function signResponse(ResponseInterface $response, ShopEntity $shop): ResponseInterface

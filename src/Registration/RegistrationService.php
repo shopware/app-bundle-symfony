@@ -35,7 +35,7 @@ class RegistrationService
         $this->shopRepository->createShop($shop);
 
         return [
-            'proof' => $this->responseSigner->getRegistrationSignature($shop),
+            'proof' => $this->responseSigner->getRegistrationSignature($shop, $this->appSecret),
             'confirmation_url' => $confirmUrl,
             'secret' => $shop->getShopSecret(),
         ];
