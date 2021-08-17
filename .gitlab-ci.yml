@@ -1,0 +1,67 @@
+variables:
+  BUNDLE_IMAGE_NAME: "${CI_REGISTRY}/s.franze/shopwareappbundle/shopware-app-bundle"
+
+stages:
+  - Build Container
+  - Static Analysis
+  - Test
+
+cache:
+  key: "Eternal static key"
+  paths:
+    - .composer
+
+Build Container:
+  stage: Build Container
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - .gitlab/docker-image/*
+      - .gitlab/docker-image/**
+  image: docker
+  services:
+    - name: docker:19.03.8-dind
+      alias: docker
+  script:
+    - apk add git bash
+    - docker login "${CI_REGISTRY}" -u $CI_REGISTRY_USER -p "$CI_REGISTRY_PASSWORD"
+    - docker build .gitlab/docker-image -t "${BUNDLE_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker tag "${BUNDLE_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" "${BUNDLE_IMAGE_NAME}:latest"
+    - docker push "${BUNDLE_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker push "${BUNDLE_IMAGE_NAME}:latest"
+
+Easy Coding Standard:
+  image: "${BUNDLE_IMAGE_NAME}:latest"
+  extends: .run_detached
+  stage: Static Analysis
+  script:
+    - make ecs-dry
+
+Static Analysis:
+  image: "${BUNDLE_IMAGE_NAME}:latest"
+  extends: .run_detached
+  stage: Static Analysis
+  script:
+    - make static-analysis
+
+Unit:
+  image: "${BUNDLE_IMAGE_NAME}:latest"
+  extends: .run_detached
+  stage: Test
+  script:
+    - make test-coverage-cobertura
+  artifacts:
+    when: always
+    expire_in: 1 month
+    paths:
+      - build/artifacts/cobertura-coverage.xml
+    reports:
+      cobertura: build/artifacts/cobertura-coverage.xml
+
+.run_detached:
+  only:
+    refs:
+      - merge_requests
+      - main

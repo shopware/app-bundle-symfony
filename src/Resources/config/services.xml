@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <!-- TODO GTS-151: remove public status once we use the metadata to create meanifest.xml -->
+        <service id="Shopware\AppBundle\Metadata" public="true">
+            <factory class="Shopware\AppBundle\Metadata" method="fromArray"/>
+
+            <argument>%shopware_app.metadata%</argument>
+        </service>
+
+        <service id="Shopware\AppBundle\Authentication\RequestVerifier"/>
+
+        <service id="Shopware\AppBundle\Authentication\ResponseSigner">
+            <argument type="service" id="Shopware\AppBundle\Metadata"/>
+        </service>
+
+        <service id="Shopware\AppBundle\Client\ClientFactoryInterface" class="Shopware\AppBundle\Client\GuzzleClientFactory"/>
+
+        <service id="Shopware\AppBundle\Registration\RegistrationService">
+            <argument>%shopware_app.setup.secret%</argument>
+            <argument type="service" id="Shopware\AppBundle\Shop\ShopRepositoryInterface"/>
+            <argument type="service" id="Shopware\AppBundle\Authentication\RequestVerifier"/>
+            <argument type="service" id="Shopware\AppBundle\Authentication\ResponseSigner"/>
+            <argument type="service" id="Shopware\AppBundle\Registration\ShopSecretGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\Registration\ShopSecretGeneratorInterface"
+                 class="Shopware\AppBundle\Registration\RandomNumberShopSecretGenerator"/>
+
+        <service id="Shopware\AppBundle\Shop\ShopRepositoryInterface"
+                 class="Shopware\AppBundle\Shop\EmptyShopRepository"/>
+    </services>
+</container>

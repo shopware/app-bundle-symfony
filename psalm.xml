@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psalm
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor-bin/analysis/vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <directory name="vendor-bin" />
+        </ignoreFiles>
+    </projectFiles>
+    <issueHandlers>
+        <!-- Psalm cant know that the root element returned from TreeBuilder is of type array -->
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/DependencyInjection/Configuration.php"/>
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <file name="src/Metadata.php"/>
+            </errorLevel>
+        </MissingConstructor>
+
+        <InvalidReturnType>
+            <errorLevel type="suppress">
+                <file name="src/Shop/EmptyShopRepository.php"/>
+            </errorLevel>
+        </InvalidReturnType>
+    </issueHandlers>
+</psalm>

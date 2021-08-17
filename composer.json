@@ -1,0 +1,37 @@
+{
+    "name": "shopware/app-bundle",
+    "version": "1.0.0",
+    "description": "Symfony bundle to develop shopware apps easy",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "shopware AG"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Shopware\\AppBundle\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shopware\\AppBundle\\Test\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "symfony/framework-bundle": "^5.3",
+        "symfony/yaml": "^5.3",
+        "guzzlehttp/guzzle": "^7.3",
+        "psr/http-message": "^1.0",
+        "psr/http-client": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "bamarni/composer-bin-plugin": "^1.4",
+        "symfony/phpunit-bridge": "^5.3"
+    }
+}
