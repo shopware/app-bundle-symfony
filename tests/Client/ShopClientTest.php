@@ -71,7 +71,7 @@ class ShopClientTest extends TestCase
         static::assertEquals('/some-route', $lastRequest->getRequestTarget());
         static::assertEquals([
             'Bearer shopware-access-token',
-        ], $lastRequest->getHeader('Authentication'));
+        ], $lastRequest->getHeader('Authorization'));
     }
 
     public function testItRefreshesTheTokenIfTheClientReturnsAn401(): void
@@ -147,7 +147,6 @@ class ShopClientTest extends TestCase
                 'token_type' => 'Bearer',
                 'expires_in' => 600,
                 'access_token' => 'shopware-access-token',
-                'refresh_token' => 'shopware-refresh-token',
             ])
         );
     }
@@ -161,7 +160,6 @@ class ShopClientTest extends TestCase
                 'token_type' => 'Bearer',
                 'expires_in' => 600,
                 'access_token' => 'refreshed-shopware-access-token',
-                'refresh_token' => 'shopware-refresh-token',
             ])
         );
     }
