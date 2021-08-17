@@ -27,7 +27,7 @@ class ShopClient implements ClientInterface
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         if ($this->credentials === null) {
-            $this->credentials = $this->refreshToken();
+            $this->credentials = $this->createToken();
         }
 
         $response = $this->client->sendRequest($request->withHeader(
@@ -40,32 +40,12 @@ class ShopClient implements ClientInterface
         }
 
         // retry request with updated credentials
-        $this->credentials = $this->refreshToken();
+        $this->credentials = $this->createToken();
 
         return $this->client->sendRequest($request->withHeader(
-            'Authentication',
+            'Authorization',
             "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
         ));
-    }
-
-    private function refreshToken(): Credentials
-    {
-        if ($this->credentials === null) {
-            return $this->createToken();
-        }
-
-        $refreshRequest = new Request(
-            'POST',
-            new Uri(self::AUTHENTICATION_ROUTE),
-            [],
-            json_encode([
-                'grant_type' => 'refresh_token',
-                'client_id' => $this->shop->getApiKey(),
-                'refresh_token' => $this->credentials->getRefreshToken(),
-            ])
-        );
-
-        return $this->requestToken($refreshRequest);
     }
 
     private function createToken(): Credentials

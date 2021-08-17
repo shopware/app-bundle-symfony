@@ -8,8 +8,7 @@ class Credentials
 {
     public function __construct(
         private string $tokenType,
-        private string $accessToken,
-        private string $refreshToken
+        private string $accessToken
     ) {
     }
 
@@ -19,8 +18,7 @@ class Credentials
 
         return new self(
             $content['token_type'],
-            $content['access_token'],
-            $content['refresh_token']
+            $content['access_token']
         );
     }
 
@@ -32,10 +30,5 @@ class Credentials
     public function getAccessToken(): string
     {
         return $this->accessToken;
-    }
-
-    public function getRefreshToken(): string
-    {
-        return $this->refreshToken;
     }
 }
