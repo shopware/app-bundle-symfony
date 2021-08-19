@@ -2,6 +2,7 @@
 
 namespace Shopware\AppBundle\DependencyInjection;
 
+use Shopware\AppBundle\Attribute\Permission;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -67,6 +68,26 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('setup')
                     ->children()
                         ->scalarNode('secret')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->arrayNode('permissions')
+                    ->children()
+                        ->arrayNode('read')
+                            ->scalarPrototype()
+                                ->end()
+                            ->end()
+                        ->arrayNode('create')
+                            ->scalarPrototype()
+                                ->end()
+                            ->end()
+                        ->arrayNode('update')
+                            ->scalarPrototype()
+                                ->end()
+                            ->end()
+                        ->arrayNode('delete')
+                            ->scalarPrototype()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

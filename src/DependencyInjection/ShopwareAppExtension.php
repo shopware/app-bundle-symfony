@@ -27,8 +27,8 @@ class ShopwareAppExtension extends Extension
         foreach ($options as $key => $option) {
             $key = "{$prefix}.{$key}";
 
-            // set metadata at once
-            if ($key === 'shopware_app.metadata') {
+            // set metadata and permissions at once
+            if ($key === 'shopware_app.metadata' || $key === 'shopware_app.permissions') {
                 $container->setParameter($key, $option);
 
                 continue;

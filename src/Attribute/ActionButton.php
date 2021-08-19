@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Shopware\AppBundle\Annotation;
+namespace Shopware\AppBundle\Attribute;
 
 use Attribute;
 use Symfony\Component\Routing\Annotation\Route;

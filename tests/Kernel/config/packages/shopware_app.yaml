@@ -15,3 +15,20 @@ shopware_app:
     privacy: privacy
   setup:
     secret: myAppSecret
+  permissions:
+    read:
+      - read
+      - some
+      - foo
+    create:
+      - create
+      - more
+      - foo
+    update:
+      - update
+      - foo
+    delete:
+      - delete
+      - all
+      - this
+      - foo
