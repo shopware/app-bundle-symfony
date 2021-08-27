@@ -2,6 +2,7 @@
 
 namespace Shopware\AppBundle\Test;
 
+use Shopware\AppBundle\Attribute\Permission;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ShopwareAppBundleTest extends KernelTestCase
@@ -10,6 +11,7 @@ class ShopwareAppBundleTest extends KernelTestCase
     {
         $metaData = $this->getContainer()->getParameter('shopware_app.metadata');
         $appSecret = $this->getContainer()->getParameter('shopware_app.setup.secret');
+        $permissions = $this->getContainer()->getParameter('shopware_app.permissions');
 
         static::assertEquals([
             'version' => '1.0.0',
@@ -30,5 +32,28 @@ class ShopwareAppBundleTest extends KernelTestCase
         ], $metaData);
 
         static::assertEquals('myAppSecret', $appSecret);
+
+        static::assertEquals([
+            'read' => [
+                'read',
+                'some',
+                'foo',
+            ],
+            'create' => [
+                'create',
+                'more',
+                'foo',
+            ],
+            'update' => [
+                'update',
+                'foo',
+            ],
+            'delete' => [
+                'delete',
+                'all',
+                'this',
+                'foo',
+            ],
+        ], $permissions);
     }
 }
