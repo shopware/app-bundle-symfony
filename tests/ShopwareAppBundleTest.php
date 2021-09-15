@@ -12,6 +12,7 @@ class ShopwareAppBundleTest extends KernelTestCase
         $metaData = $this->getContainer()->getParameter('shopware_app.metadata');
         $appSecret = $this->getContainer()->getParameter('shopware_app.setup.secret');
         $permissions = $this->getContainer()->getParameter('shopware_app.permissions');
+        $customFieldsPath = $this->getContainer()->getParameter('shopware_app.customFieldsPath');
 
         static::assertEquals([
             'version' => '1.0.0',
@@ -55,5 +56,7 @@ class ShopwareAppBundleTest extends KernelTestCase
                 'foo',
             ],
         ], $permissions);
+
+        static::assertEquals('../../path/to/customFields.xml', $customFieldsPath);
     }
 }
