@@ -32,3 +32,4 @@ shopware_app:
       - all
       - this
       - foo
+  customFieldsPath: '../../path/to/customFields.xml'
