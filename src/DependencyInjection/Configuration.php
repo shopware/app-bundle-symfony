@@ -93,6 +93,8 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->scalarNode('customFieldsPath')
                     ->end()
+                ->scalarNode('cookiesPath')
+                    ->end()
                 ->end();
 
         return $treeBuilder;
