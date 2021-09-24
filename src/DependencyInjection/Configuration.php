@@ -2,7 +2,6 @@
 
 namespace Shopware\AppBundle\DependencyInjection;
 
-use Shopware\AppBundle\Attribute\Permission;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
