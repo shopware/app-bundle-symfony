@@ -3,7 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-
         <!-- TODO GTS-151: remove public status once we use the metadata to create meanifest.xml -->
         <service id="Shopware\AppBundle\Metadata" public="true">
             <factory class="Shopware\AppBundle\Metadata" method="fromArray"/>
@@ -32,5 +31,89 @@
 
         <service id="Shopware\AppBundle\Shop\ShopRepositoryInterface"
                  class="Shopware\AppBundle\Shop\EmptyShopRepository"/>
+
+        <service id="Shopware\AppBundle\Command\CreateManifestCommand">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\ManifestCreationService"/>
+            <argument>%kernel.project_dir%</argument>
+            <argument>%shopware_app.manifestDestinationPath%</argument>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\ManifestCreationService">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\SetupGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\MetaDataGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\PermissionsGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\WebhooksGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AdminGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\CustomFieldsGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\CookiesGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\PaymentsGenerator"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\AttributeReader">
+            <argument type="tagged" tag="app.abstract_controller"/>
+            <argument type="tagged" tag="shopware.payments"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\SetupGenerator">
+            <argument>%shopware_app.setup.secret%</argument>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\MetaDataGenerator">
+            <argument type="service" id="Shopware\AppBundle\Metadata"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\PermissionsGenerator">
+            <argument>%shopware_app.permissions%</argument>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\WebhooksGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\AdminGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\ModuleGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\MainModuleGenerator"/>
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\ActionButtonGenerator"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\ModuleGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\MainModuleGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\ActionButtonGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\CustomFieldsGenerator">
+            <argument>%shopware_app.customFieldsPath%</argument>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\CookiesGenerator">
+            <argument>%shopware_app.cookiesPath%</argument>
+        </service>
+
+        <service id="Shopware\AppBundle\ManifestGeneration\PaymentsGenerator">
+            <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <instanceof id="Symfony\Bundle\FrameworkBundle\Controller\AbstractController" autowire="true">
+            <tag name="app.abstract_controller"/>
+        </instanceof>
+
+        <instanceof id="Shopware\AppBundle\Interfaces\PaymentMethodInterface" autowire="true">
+            <tag name="shopware.payments"/>
+        </instanceof>
     </services>
 </container>

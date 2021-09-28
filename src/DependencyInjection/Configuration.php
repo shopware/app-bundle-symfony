@@ -91,8 +91,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->scalarNode('customFieldsPath')
+                    ->defaultValue('')
                     ->end()
                 ->scalarNode('cookiesPath')
+                    ->defaultValue('')
+                    ->end()
+                ->scalarNode('manifestDestinationPath')
+                    ->defaultValue('')
                     ->end()
                 ->end();
 
