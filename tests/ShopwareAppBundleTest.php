@@ -2,7 +2,6 @@
 
 namespace Shopware\AppBundle\Test;
 
-use Shopware\AppBundle\Attribute\Permission;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ShopwareAppBundleTest extends KernelTestCase

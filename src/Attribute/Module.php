@@ -9,12 +9,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class Module extends Route
 {
     /**
-     * @param array<string, string> $label    array with language => translation
-     * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
-     * @param array|string|null $path
-     * @param string[]          $requirements
-     * @param string[]|string   $methods
-     * @param string[]|string   $schemes
+     * @param array<string, string> $label        array with language => translation
+     * @param array|string          $data         data array managed by the Doctrine Annotations library or the path
+     * @param array|string|null     $path
+     * @param string[]              $requirements
+     * @param string[]|string       $methods
+     * @param string[]|string       $schemes
      */
     public function __construct(
         string $name,

@@ -21,8 +21,8 @@ class WebhookTest extends TestCase
             'event' => 'event',
             'path' => '/my/webhook',
             'methods' => [
-                'GET'
-            ]
+                'GET',
+            ],
         ]);
     }
 }
