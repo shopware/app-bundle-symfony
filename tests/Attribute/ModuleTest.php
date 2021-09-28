@@ -8,7 +8,7 @@ use Shopware\AppBundle\Attribute\Module;
 
 class ModuleTest extends TestCase
 {
-    #[Module(path: '/my/module', name: 'my_module', label: ['default' => 'my module', 'de-de' => 'mein Modul'], parent: 'parent', position: 30)]
+    #[Module(name: 'my_module', label: ['default' => 'my module', 'de-de' => 'mein Modul'], parent: 'parent', position: 30, isMainModule: false, path: '/my/module')]
     public function testModuleAttribute(): void
     {
         $reflectionClass = new ReflectionClass($this);
@@ -25,6 +25,7 @@ class ModuleTest extends TestCase
             ],
             'parent' => 'parent',
             'position' => 30,
+            'isMainModule' => false,
         ]);
     }
 }
