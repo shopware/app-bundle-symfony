@@ -8,7 +8,7 @@ use Shopware\AppBundle\Attribute\Webhook;
 
 class WebhookTest extends TestCase
 {
-    #[Webhook(name: 'name', event: 'event', path: '/my/webhook', methods: ['GET'])]
+    #[Webhook(name: 'name', event: 'event', path: '/my/webhook')]
     public function testWebhookAttribute(): void
     {
         $reflectionClass = new ReflectionClass($this);
@@ -20,9 +20,6 @@ class WebhookTest extends TestCase
             'name' => 'name',
             'event' => 'event',
             'path' => '/my/webhook',
-            'methods' => [
-                'GET',
-            ],
         ]);
     }
 }
