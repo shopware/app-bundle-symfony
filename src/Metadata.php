@@ -40,6 +40,15 @@ class Metadata
         return (new self())->assign($data);
     }
 
+    public function get(string $key): mixed
+    {
+        try {
+            return $this->$key;
+        } catch (\Error | \Exception $error) {
+            return null;
+        }
+    }
+
     public function getName(): string
     {
         return $this->name;
