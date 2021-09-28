@@ -24,7 +24,7 @@ class ActionButtonTest extends TestCase
                 'default' => 'default',
                 'en-GB' => 'translation',
             ],
-            'path' => '/my/action/button'
+            'path' => '/my/action/button',
         ]);
     }
 }
