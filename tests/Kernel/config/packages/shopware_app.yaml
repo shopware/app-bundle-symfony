@@ -33,3 +33,4 @@ shopware_app:
       - this
       - foo
   customFieldsPath: '../../path/to/customFields.xml'
+  cookiesPath: '../../path/to/cookies.xml'
