@@ -81,10 +81,13 @@ class RequestVerifier
     private function buildValidationQuery(array $queries): string
     {
         return sprintf(
-            'shop-id=%s&shop-url=%s&timestamp=%s',
+            'shop-id=%s&shop-url=%s&timestamp=%s&sw-version=%s&sw-context-language=%s&sw-user-language=%s',
             $queries['shop-id'],
             $queries['shop-url'],
-            $queries['timestamp']
+            $queries['timestamp'],
+            $queries['sw-version'],
+            $queries['sw-context-language'],
+            $queries['sw-user-language'],
         );
     }
 }
