@@ -71,7 +71,7 @@ class ShopClientTest extends TestCase
         static::assertEquals('/some-route', $lastRequest->getRequestTarget());
         static::assertEquals([
             'Bearer shopware-access-token',
-        ], $lastRequest->getHeader('Authorization'));
+        ], $lastRequest->getHeader('Authentication'));
     }
 
     public function testItRefreshesTheTokenIfTheClientReturnsAn401(): void
