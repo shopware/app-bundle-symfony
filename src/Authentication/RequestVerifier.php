@@ -42,20 +42,25 @@ class RequestVerifier
 
     public function authenticateGetRequest(RequestInterface $request, ShopEntity $shop): void
     {
-        $queries = Query::parse($request->getUri()->getQuery());
-
-        if (!isset($queries['shopware-shop-signature'])) {
-            throw new SignatureNotFoundException($request);
-        }
-
-        $signature = $queries['shopware-shop-signature'];
+        $signature = $this->getSignatureFromQuery($request);
 
         $this->verifySignature(
             $request,
             $shop->getShopSecret(),
-            $this->buildValidationQuery($queries),
+            $this->removeSignatureFromQuery($request->getUri()->getQuery(), $signature),
             $signature
         );
+    }
+
+    private function getSignatureFromQuery(RequestInterface $request): string
+    {
+        $queries = Query::parse($request->getUri()->getQuery());
+
+        if (!isset($queries[self::SHOPWARE_SHOP_SIGNATURE_HEADER])) {
+            throw new SignatureNotFoundException($request);
+        }
+
+        return $queries[self::SHOPWARE_SHOP_SIGNATURE_HEADER];
     }
 
     private function getSignatureFromHeader(RequestInterface $request, string $headerName): string
@@ -81,13 +86,19 @@ class RequestVerifier
     private function buildValidationQuery(array $queries): string
     {
         return sprintf(
-            'shop-id=%s&shop-url=%s&timestamp=%s&sw-version=%s&sw-context-language=%s&sw-user-language=%s',
+            'shop-id=%s&shop-url=%s&timestamp=%s',
             $queries['shop-id'],
             $queries['shop-url'],
-            $queries['timestamp'],
-            $queries['sw-version'],
-            $queries['sw-context-language'],
-            $queries['sw-user-language'],
+            $queries['timestamp']
+        );
+    }
+
+    private function removeSignatureFromQuery(string $query, string $signature): string
+    {
+        return preg_replace(
+            sprintf('/&%s=%s/', self::SHOPWARE_SHOP_SIGNATURE_HEADER, $signature),
+            '',
+            $query
         );
     }
 }
