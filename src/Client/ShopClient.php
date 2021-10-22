@@ -15,6 +15,8 @@ class ShopClient implements ClientInterface
 {
     private const AUTHENTICATION_ROUTE = '/api/oauth/token';
 
+    private const AUTH_HEADER = 'Authentication';
+
     private ?Credentials $credentials;
 
     public function __construct(
@@ -31,7 +33,7 @@ class ShopClient implements ClientInterface
         }
 
         $response = $this->client->sendRequest($request->withHeader(
-            'Authentication',
+            self::AUTH_HEADER,
             "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
         ));
 
@@ -43,7 +45,7 @@ class ShopClient implements ClientInterface
         $this->credentials = $this->createToken();
 
         return $this->client->sendRequest($request->withHeader(
-            'Authorization',
+            self::AUTH_HEADER,
             "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
         ));
     }

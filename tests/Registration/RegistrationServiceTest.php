@@ -45,7 +45,7 @@ class RegistrationServiceTest extends KernelTestCase
     {
         $shopId = 'unique-id';
         $shopUrl = 'shop.test';
-        $shopSecret = 'i-am-secret';
+        $shopSecret = $this->getContainer()->getParameter('shopware_app.setup.secret');
 
         $query = Query::build([
             'shop-id' => $shopId,
@@ -53,7 +53,7 @@ class RegistrationServiceTest extends KernelTestCase
             'timestamp' => 'now',
         ]);
 
-        $signature = hash_hmac('sha256', $query, $this->getContainer()->getParameter('shopware_app.setup.secret'));
+        $signature = hash_hmac('sha256', $query, $shopSecret);
 
         $registrationRequest = new Request(
             'GET',
@@ -88,7 +88,7 @@ class RegistrationServiceTest extends KernelTestCase
         static::assertEquals([
             'proof' => $expectedProof,
             'confirmation_url' => '/confirm',
-            'secret' => 'i-am-secret',
+            'secret' => $shopSecret,
         ], $registration);
     }
 
