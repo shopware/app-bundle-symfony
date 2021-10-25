@@ -11,7 +11,7 @@ class ConfirmationRoute extends Route
     private const METHODS = ['POST'];
 
     /**
-     * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
+     * @param array|string      $data    data array managed by the Doctrine Annotations library or the path
      * @param array|string|null $path
      * @param string[]|string   $schemes
      */
