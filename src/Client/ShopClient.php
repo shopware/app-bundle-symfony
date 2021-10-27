@@ -15,7 +15,7 @@ class ShopClient implements ClientInterface
 {
     private const AUTHENTICATION_ROUTE = '/api/oauth/token';
 
-    private const AUTH_HEADER = 'Authentication';
+    private const AUTH_HEADER = 'Authorization';
 
     private ?Credentials $credentials;
 
