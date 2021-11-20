@@ -58,7 +58,7 @@ class ShopClient implements ClientInterface
 
         $authRequest = new Request(
             'POST',
-            new Uri(self::AUTHENTICATION_ROUTE),
+            $this->shop->getUrl() . self::AUTHENTICATION_ROUTE,
             [],
             json_encode([
                 'grant_type' => 'client_credentials',
