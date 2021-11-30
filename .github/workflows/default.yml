@@ -17,7 +17,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, dom, fileinfo
           coverage: xdebug
-          tools: composer, psalm, phpunit
+          tools: composer
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,13 +37,13 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
-      - run: composer bin all install
-
-      - name: Psalm
-        run: vendor/bin/psalm --output-format=github
+      - run: composer bin all install --no-progress --prefer-dist
 
       - name: Ecs
-        run: vendor/bin/ecs check src/ tests/ --config ecs.php --ansi --fix
+        run: vendor/bin/ecs check src/ tests/ --config ecs.php --ansi
+      
+      - name: Psalm
+        run: vendor/bin/psalm --output-format=github
 
       - name: Phpunit
         run: vendor/bin/phpunit --coverage-text
