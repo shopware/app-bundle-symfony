@@ -15,17 +15,17 @@ class TestKernel extends Kernel
 
     private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return __DIR__;
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->getProjectDir() . '/../../var/cache';
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->getProjectDir() . '/../../var/log';
     }
