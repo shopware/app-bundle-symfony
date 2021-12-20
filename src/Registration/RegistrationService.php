@@ -51,9 +51,9 @@ class RegistrationService
 
         $this->requestVerifier->authenticatePostRequest($request, $shop);
 
-        $shop->setApiKey($requestContent['apiKey']);
-        $shop->setSecretKey($requestContent['secretKey']);
-
-        $this->shopRepository->updateShop($shop);
+        $this->shopRepository->updateShop(
+            $shop->withApiKey($requestContent['apiKey'])
+                ->withSecretKey($requestContent['secretKey'])
+        );
     }
 }

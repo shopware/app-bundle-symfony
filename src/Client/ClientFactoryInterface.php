@@ -2,9 +2,9 @@
 
 namespace Shopware\AppBundle\Client;
 
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 interface ClientFactoryInterface
 {
-    public function createClient(ShopEntity $shop): ShopClient;
+    public function createClient(ShopInterface $shop): ShopClient;
 }

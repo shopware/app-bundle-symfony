@@ -4,11 +4,11 @@ namespace Shopware\AppBundle\Shop;
 
 interface ShopRepositoryInterface
 {
-    public function createShop(ShopEntity $shop): void;
+    public function createShop(ShopInterface $shop): void;
 
-    public function getShopFromId(string $shopId): ShopEntity;
+    public function getShopFromId(string $shopId): ShopInterface;
 
-    public function updateShop(ShopEntity $shop): void;
+    public function updateShop(ShopInterface $shop): void;
 
-    public function deleteShop(ShopEntity $shop): void;
+    public function deleteShop(ShopInterface $shop): void;
 }

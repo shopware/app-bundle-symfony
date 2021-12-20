@@ -3,11 +3,11 @@
 namespace Shopware\AppBundle\Client;
 
 use GuzzleHttp\Client;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class GuzzleClientFactory implements ClientFactoryInterface
 {
-    public function createClient(ShopEntity $shop): ShopClient
+    public function createClient(ShopInterface $shop): ShopClient
     {
         return new ShopClient(
             new Client($this->getClientConfiguration($shop)),

@@ -2,11 +2,11 @@
 
 namespace Shopware\AppBundle\Exception;
 
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class RegistrationNotCompletedException extends \Exception
 {
-    public function __construct(ShopEntity $shop)
+    public function __construct(ShopInterface $shop)
     {
         parent::__construct("Registration for shop with id {$shop->getId()} and url {$shop->getUrl()} is not completed.");
     }
