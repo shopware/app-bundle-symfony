@@ -48,6 +48,30 @@ class GuzzleClientFactoryTest extends TestCase
         static::assertEquals('/sub/domain/api/search/product', $request->getRequestTarget());
     }
 
+    public function testClientFactoryDoesNotAddDoubleSlash(): void
+    {
+        $clientFactory = new MockedGuzzleClientFactory();
+
+        $client = $clientFactory->createClient(new ShopEntity(
+            'shopId',
+            'https://shop.domain/sub/domain/',
+            'secret',
+            'abcd',
+            'efgh',
+        ));
+
+        $clientFactory->getMockHandler()->append(
+            $this->getAuthResponse(),
+            new Response(200, [], '[]'),
+        );
+
+        $client->sendRequest(new Request('POST', 'api/search/product', [], '{}'));
+
+        $request = $clientFactory->getMockHandler()->getLastRequest();
+
+        static::assertEquals('/sub/domain/api/search/product', $request->getRequestTarget());
+    }
+
     private function getAuthResponse(): ResponseInterface
     {
         return new Response(
