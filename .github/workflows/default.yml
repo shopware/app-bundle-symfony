@@ -36,14 +36,13 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist
-      - run: composer bin all install --no-progress --prefer-dist
+        run: composer install --no-interaction --optimize-autoloader --no-progress
 
       - name: Ecs
-        run: vendor/bin/ecs check src/ tests/ --config ecs.php --ansi
+        run: composer run ecs-dry -- --ansi
       
       - name: Psalm
-        run: vendor/bin/psalm --output-format=github
+        run: composer run psalm -- --output-format=github
 
       - name: Phpunit
-        run: vendor/bin/phpunit --coverage-text
+        run: composer run test-cov -- --coverage-text

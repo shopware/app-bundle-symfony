@@ -54,10 +54,5 @@
         "test-coverage": "@test-cov --coverage-clover build/artifacts/phpunit.clover.xml --coverage-html build/artifacts/phpunit-coverage-html",
         "test-coverage-cobertura": "@test-cov --configuration phpunit.xml.dist --coverage-cobertura build/artifacts/cobertura-coverage.xml",
         "test": "phpunit --configuration phpunit.xml.dist"
-    },
-    "extra": {
-        "bamarni-bin": {
-            "target-directory": "vendor-bin/analysis"
-        }
     }
 }
