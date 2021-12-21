@@ -20,6 +20,9 @@ class RegistrationService
     ) {
     }
 
+    /**
+     * @psalm-suppress DeprecatedMethod
+     */
     public function handleShopRegistrationRequest(RequestInterface $request, string $confirmUrl): array
     {
         $this->requestVerifier->authenticateRegistrationRequest($request, $this->appSecret);
@@ -41,6 +44,9 @@ class RegistrationService
         ];
     }
 
+    /**
+     * @psalm-suppress DeprecatedMethod
+     */
     public function handleConfirmation(RequestInterface $request): void
     {
         $requestContent = json_decode($request->getBody()->getContents(), true);

@@ -4,11 +4,23 @@ namespace Shopware\AppBundle\Shop;
 
 interface ShopRepositoryInterface
 {
-    public function createShop(ShopInterface $shop): void;
+    /**
+     * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
+     */
+    public function createShop(ShopInterface|ShopEntity $shop): void;
 
-    public function getShopFromId(string $shopId): ShopInterface;
+    /**
+     * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
+     */
+    public function getShopFromId(string $shopId): ShopInterface|ShopEntity;
 
-    public function updateShop(ShopInterface $shop): void;
+    /**
+     * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
+     */
+    public function updateShop(ShopInterface|ShopEntity $shop): void;
 
-    public function deleteShop(ShopInterface $shop): void;
+    /**
+     * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
+     */
+    public function deleteShop(ShopInterface|ShopEntity $shop): void;
 }
