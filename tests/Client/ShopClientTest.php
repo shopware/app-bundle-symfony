@@ -2,61 +2,52 @@
 
 namespace Shopware\AppBundle\Test\Client;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Shopware\AppBundle\Client\ShopClient;
 use Shopware\AppBundle\Exception\AuthenticationException;
 use Shopware\AppBundle\Exception\RegistrationNotCompletedException;
 use Shopware\AppBundle\Shop\ShopEntity;
 
 class ShopClientTest extends TestCase
 {
-    private MockHandler $mockHandler;
-
-    private array $history;
+    private MockedGuzzleClientFactory $clientFactory;
 
     public function setUp(): void
     {
-        $this->mockHandler = new MockHandler();
-
-        $this->history = [];
+        $this->clientFactory = new MockedGuzzleClientFactory();
     }
 
     public function testAuthenticateThrowsExceptionIfShopIsNotRegisteredYet(): void
     {
         $shop = $this->getShop(null, null);
 
-        $client = $this->getClientFromShop($shop);
+        $client = $this->clientFactory->createClient($shop);
 
         static::expectException(RegistrationNotCompletedException::class);
-        $client->sendRequest(new Request('POST', new Uri('/some-route')));
+        $client->sendRequest(new Request('POST', new Uri('some-route')));
     }
 
     public function testItAuthenticatesAndSendsAnRequest(): void
     {
         $shop = $this->getShop();
 
-        $client = $this->getClientFromShop($shop);
+        $client = $this->clientFactory->createClient($shop);
 
-        $this->mockHandler->append(
+        $this->clientFactory->getMockHandler()->append(
             $this->getAuthResponse(),
             new Response(204, [], null)
         );
 
-        $client->sendRequest(new Request('POST', new Uri('/some-route')));
+        $client->sendRequest(new Request('POST', new Uri('some-route')));
 
-        static::assertCount(2, $this->history);
+        static::assertCount(2, $this->clientFactory->getHistory());
 
         /** @var RequestInterface $authenticationRequest */
-        $authenticationRequest = $this->history[0]['request'];
+        $authenticationRequest = $this->clientFactory->getHistory()[0]['request'];
 
         static::assertEquals('POST', $authenticationRequest->getMethod());
         static::assertEquals('/api/oauth/token', $authenticationRequest->getRequestTarget());
@@ -66,7 +57,7 @@ class ShopClientTest extends TestCase
             'client_secret' => $shop->getSecretKey(),
         ], json_decode($authenticationRequest->getBody()->getContents(), true));
 
-        $lastRequest = $this->history[1]['request'];
+        $lastRequest = $this->clientFactory->getHistory()[1]['request'];
 
         static::assertEquals('/some-route', $lastRequest->getRequestTarget());
         static::assertEquals([
@@ -78,18 +69,18 @@ class ShopClientTest extends TestCase
     {
         $shop = $this->getShop();
 
-        $client = $this->getClientFromShop($shop);
+        $client = $this->clientFactory->createClient($shop);
 
-        $this->mockHandler->append(
+        $this->clientFactory->getMockHandler()->append(
             $this->getAuthResponse(),
             new Response(401, [], null),
             $this->getRefreshAuthResponse(),
             new Response(200, [], null)
         );
 
-        $client->sendRequest(new Request('POST', new Uri('/some-route')));
+        $client->sendRequest(new Request('POST', new Uri('some-route')));
 
-        $lastRequest = $this->mockHandler->getLastRequest();
+        $lastRequest = $this->clientFactory->getMockHandler()->getLastRequest();
 
         static::assertEquals('/some-route', $lastRequest->getRequestTarget());
         static::assertEquals([
@@ -101,14 +92,14 @@ class ShopClientTest extends TestCase
     {
         $shop = $this->getShop();
 
-        $client = $this->getClientFromShop($shop);
+        $client = $this->clientFactory->createClient($shop);
 
-        $this->mockHandler->append(
+        $this->clientFactory->getMockHandler()->append(
             new Response(403, [], null),
         );
 
         static::expectException(AuthenticationException::class);
-        $client->sendRequest(new Request('POST', new Uri('/some-route')));
+        $client->sendRequest(new Request('POST', new Uri('some-route')));
     }
 
     private function getShop(?string $apiKey = 'integration-key', ?string $secretKey = 'integration-secret'): ShopEntity
@@ -119,22 +110,6 @@ class ShopClientTest extends TestCase
             'i-am-secret',
             $apiKey,
             $secretKey
-        );
-    }
-
-    private function getClientFromShop(ShopEntity $shop): ShopClient
-    {
-        $handlerStack = HandlerStack::create($this->mockHandler);
-        $handlerStack->push(Middleware::history($this->history));
-
-        return new ShopClient(
-            new Client(
-                [
-                    'base_url' => $shop->getUrl(),
-                    'handler' => $handlerStack,
-                ]
-            ),
-            $shop
         );
     }
 

@@ -13,7 +13,7 @@ use Shopware\AppBundle\Shop\ShopEntity;
 
 class ShopClient implements ClientInterface
 {
-    private const AUTHENTICATION_ROUTE = '/api/oauth/token';
+    private const AUTHENTICATION_ROUTE = 'api/oauth/token';
 
     private const AUTH_HEADER = 'Authorization';
 
