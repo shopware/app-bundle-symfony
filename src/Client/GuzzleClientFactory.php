@@ -3,11 +3,11 @@
 namespace Shopware\AppBundle\Client;
 
 use GuzzleHttp\Client;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class GuzzleClientFactory implements ClientFactoryInterface
 {
-    public function createClient(ShopEntity $shop): ShopClient
+    public function createClient(ShopInterface $shop): ShopClient
     {
         return new ShopClient(
             new Client($this->getClientConfiguration($shop)),
@@ -15,7 +15,7 @@ class GuzzleClientFactory implements ClientFactoryInterface
         );
     }
 
-    protected function getClientConfiguration(ShopEntity $shop): array
+    protected function getClientConfiguration(ShopInterface $shop): array
     {
         return [
             'base_uri' => $this->ensureTrailingSlashInUrl($shop->getUrl()),

@@ -6,7 +6,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Shopware\AppBundle\Client\GuzzleClientFactory;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class MockedGuzzleClientFactory extends GuzzleClientFactory
 {
@@ -30,7 +30,7 @@ class MockedGuzzleClientFactory extends GuzzleClientFactory
         return $this->history;
     }
 
-    protected function getClientConfiguration(ShopEntity $shop): array
+    protected function getClientConfiguration(ShopInterface $shop): array
     {
         $configuration = parent::getClientConfiguration($shop);
         $handlerStack = HandlerStack::create($this->mockHandler);

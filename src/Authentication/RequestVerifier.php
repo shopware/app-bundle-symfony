@@ -6,7 +6,7 @@ use GuzzleHttp\Psr7\Query;
 use Psr\Http\Message\RequestInterface;
 use Shopware\AppBundle\Exception\SignatureNotFoundException;
 use Shopware\AppBundle\Exception\SignatureValidationException;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class RequestVerifier
 {
@@ -28,7 +28,7 @@ class RequestVerifier
         );
     }
 
-    public function authenticatePostRequest(RequestInterface $request, ShopEntity $shop): void
+    public function authenticatePostRequest(RequestInterface $request, ShopInterface $shop): void
     {
         $signature = $this->getSignatureFromHeader($request, self::SHOPWARE_SHOP_SIGNATURE_HEADER);
 
@@ -40,7 +40,7 @@ class RequestVerifier
         );
     }
 
-    public function authenticateGetRequest(RequestInterface $request, ShopEntity $shop): void
+    public function authenticateGetRequest(RequestInterface $request, ShopInterface $shop): void
     {
         $signature = $this->getSignatureFromQuery($request);
 

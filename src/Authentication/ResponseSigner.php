@@ -4,7 +4,7 @@ namespace Shopware\AppBundle\Authentication;
 
 use Psr\Http\Message\ResponseInterface;
 use Shopware\AppBundle\Metadata;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class ResponseSigner
 {
@@ -13,12 +13,12 @@ class ResponseSigner
     ) {
     }
 
-    public function getRegistrationSignature(ShopEntity $shop, string $appSecret): string
+    public function getRegistrationSignature(ShopInterface $shop, string $appSecret): string
     {
         return $this->sign($shop->getId() . $shop->getUrl() . $this->metadata->getName(), $appSecret);
     }
 
-    public function signResponse(ResponseInterface $response, ShopEntity $shop): ResponseInterface
+    public function signResponse(ResponseInterface $response, ShopInterface $shop): ResponseInterface
     {
         $content = $response->getBody()->getContents();
         $response->getBody()->rewind();

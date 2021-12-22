@@ -9,22 +9,22 @@ use Shopware\AppBundle\Exception\DecorationRequiredException;
  */
 class EmptyShopRepository implements ShopRepositoryInterface
 {
-    public function createShop(ShopEntity $shop): void
+    public function createShop(ShopInterface $shop): void
     {
         $this->throwException();
     }
 
-    public function getShopFromId(string $shopId): ShopEntity
+    public function getShopFromId(string $shopId): ShopInterface
     {
         $this->throwException();
     }
 
-    public function updateShop(ShopEntity $shop): void
+    public function updateShop(ShopInterface $shop): void
     {
         $this->throwException();
     }
 
-    public function deleteShop(ShopEntity $shop): void
+    public function deleteShop(ShopInterface $shop): void
     {
         $this->throwException();
     }

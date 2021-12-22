@@ -20,6 +20,9 @@ class RegistrationService
     ) {
     }
 
+    /**
+     * @psalm-suppress DeprecatedMethod
+     */
     public function handleShopRegistrationRequest(RequestInterface $request, string $confirmUrl): array
     {
         $this->requestVerifier->authenticateRegistrationRequest($request, $this->appSecret);
@@ -41,6 +44,9 @@ class RegistrationService
         ];
     }
 
+    /**
+     * @psalm-suppress DeprecatedMethod
+     */
     public function handleConfirmation(RequestInterface $request): void
     {
         $requestContent = json_decode($request->getBody()->getContents(), true);
@@ -51,9 +57,9 @@ class RegistrationService
 
         $this->requestVerifier->authenticatePostRequest($request, $shop);
 
-        $shop->setApiKey($requestContent['apiKey']);
-        $shop->setSecretKey($requestContent['secretKey']);
-
-        $this->shopRepository->updateShop($shop);
+        $this->shopRepository->updateShop(
+            $shop->withApiKey($requestContent['apiKey'])
+                ->withSecretKey($requestContent['secretKey'])
+        );
     }
 }

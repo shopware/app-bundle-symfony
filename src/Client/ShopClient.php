@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Shopware\AppBundle\Exception\AuthenticationException;
 use Shopware\AppBundle\Exception\RegistrationNotCompletedException;
-use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 
 class ShopClient implements ClientInterface
 {
@@ -21,7 +21,7 @@ class ShopClient implements ClientInterface
 
     public function __construct(
         private ClientInterface $client,
-        private ShopEntity $shop
+        private ShopInterface $shop
     ) {
         $this->credentials = null;
     }
