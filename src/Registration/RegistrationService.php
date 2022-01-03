@@ -6,6 +6,8 @@ use GuzzleHttp\Psr7\Query;
 use Psr\Http\Message\RequestInterface;
 use Shopware\AppBundle\Authentication\RequestVerifier;
 use Shopware\AppBundle\Authentication\ResponseSigner;
+use Shopware\AppBundle\Exception\SignatureNotFoundException;
+use Shopware\AppBundle\Exception\SignatureValidationException;
 use Shopware\AppBundle\Shop\ShopEntity;
 use Shopware\AppBundle\Shop\ShopRepositoryInterface;
 
@@ -22,6 +24,9 @@ class RegistrationService
 
     /**
      * @psalm-suppress DeprecatedMethod
+     *
+     * @throws SignatureValidationException
+     * @throws SignatureNotFoundException
      */
     public function handleShopRegistrationRequest(RequestInterface $request, string $confirmUrl): array
     {
@@ -46,10 +51,14 @@ class RegistrationService
 
     /**
      * @psalm-suppress DeprecatedMethod
+     *
+     * @throws \JsonException
+     * @throws SignatureValidationException
+     * @throws SignatureNotFoundException
      */
     public function handleConfirmation(RequestInterface $request): void
     {
-        $requestContent = json_decode($request->getBody()->getContents(), true);
+        $requestContent = json_decode($request->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
         $shop = $this->shopRepository->getShopFromId($requestContent['shopId']);
 
