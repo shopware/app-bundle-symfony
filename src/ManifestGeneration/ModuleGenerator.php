@@ -16,8 +16,9 @@ class ModuleGenerator
     }
 
     /**
-     * @return array<DOMElement>
      * @throws DOMException
+     *
+     * @return array<DOMElement>
      */
     public function generate(DOMDocument $document): array
     {

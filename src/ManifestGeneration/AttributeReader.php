@@ -69,8 +69,9 @@ class AttributeReader
     }
 
     /**
-     * @return Webhook[]
      * @throws \RuntimeException
+     *
+     * @return Webhook[]
      */
     public function getWebhooks(): array
     {
@@ -100,8 +101,9 @@ class AttributeReader
     }
 
     /**
-     * @return array<ActionButton>
      * @throws \RuntimeException
+     *
+     * @return array<ActionButton>
      */
     public function getActionButtons(): array
     {
@@ -139,28 +141,40 @@ class AttributeReader
                             if ($this->registrationRoute !== null) {
                                 throw new \RuntimeException('Duplicated registration route');
                             }
-                            $this->registrationRoute = $attribute->newInstance();
+                            /** @var RegistrationRoute $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->registrationRoute = $attributeInstance;
                             break;
                         case ConfirmationRoute::class:
                             if ($this->confirmationRoute !== null) {
                                 throw new \RuntimeException('Duplicated confirmation route');
                             }
-                            $this->confirmationRoute = $attribute->newInstance();
+                            /** @var ConfirmationRoute $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->confirmationRoute = $attributeInstance;
                             break;
                         case Webhook::class:
-                            $this->webhooks[] = $attribute->newInstance();
+                            /** @var Webhook $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->webhooks[] = $attributeInstance;
                             break;
                         case Module::class:
-                            $this->modules[] = $attribute->newInstance();
+                            /** @var Module $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->modules[] = $attributeInstance;
                             break;
                         case MainModule::class:
                             if ($this->mainModule !== null) {
                                 throw new \RuntimeException('Duplicated main-module route');
                             }
-                            $this->mainModule = $attribute->newInstance();
+                            /** @var MainModule $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->mainModule = $attributeInstance;
                             break;
                         case ActionButton::class:
-                            $this->actionButtons[] = $attribute->newInstance();
+                            /** @var ActionButton $attributeInstance */
+                            $attributeInstance = $attribute->newInstance();
+                            $this->actionButtons[] = $attributeInstance;
                             break;
                     }
                 }

@@ -12,8 +12,9 @@ class DOMElementCreationException extends Exception
      */
     public $code;
 
-    public function __construct(string $elementName, $code = 0, ?Throwable $previous = null)
+    public function __construct(string $elementName, int $code = 0, ?Throwable $previous = null)
     {
+        $this->code = $code;
         parent::__construct(sprintf('Could not create element %s.', $elementName), $code, $previous);
     }
 }

@@ -32,11 +32,11 @@ class MetaDataGenerator
         $elements[] = $this->createElement($document, 'license', $this->metadata->getLicense());
 
         if ($this->metadata->icon()) {
-            $elements[] = $this->createElement($document, 'icon', $this->metadata->icon());
+            $elements[] = $this->createElement($document, 'icon', (string) $this->metadata->icon());
         }
 
         if ($this->metadata->getPrivacy()) {
-            $elements[] = $this->createElement($document, 'privacy', $this->metadata->getPrivacy());
+            $elements[] = $this->createElement($document, 'privacy', (string) $this->metadata->getPrivacy());
         }
 
         $metadata->append(...$elements);

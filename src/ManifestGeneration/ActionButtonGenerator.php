@@ -18,8 +18,9 @@ class ActionButtonGenerator
     }
 
     /**
-     * @return array<DOMElement>
      * @throws DOMElementCreationException
+     *
+     * @return array<DOMElement>
      */
     public function generate(DOMDocument $document): array
     {

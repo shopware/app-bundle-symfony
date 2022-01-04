@@ -26,8 +26,12 @@ class SetupGenerator
     {
         $setup = $this->createElement($document, 'setup');
 
+        $registrationAttribute = $this->attributeReader->getRegistrationRoute();
+        if ($registrationAttribute === null) {
+            throw new \RuntimeException('No registration route could be found.');
+        }
         $registrationRoute = $this->urlGenerator->generate(
-            $this->attributeReader->getRegistrationRoute()->getName(),
+            $registrationAttribute->getName(),
             [],
             UrlGeneratorInterface::ABSOLUTE_URL
         );

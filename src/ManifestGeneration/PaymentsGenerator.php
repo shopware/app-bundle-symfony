@@ -37,7 +37,7 @@ class PaymentsGenerator
                 $object = $paymentMethod['object'];
                 $identifier = $this->createElement($document, 'identifier', $object->getIdentifier());
                 if ($object->getIconPath()) {
-                    $icon = $this->createElement($document, 'icon', $object->getIconPath());
+                    $icon = $this->createElement($document, 'icon', (string) $object->getIconPath());
                 }
             } catch (DOMElementCreationException) {
                 continue;
