@@ -4,13 +4,17 @@ namespace Shopware\AppBundle\Command;
 
 use DOMDocument;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Shopware\AppBundle\ManifestGeneration\ManifestCreationService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('manifest:create', 'Command to create the manifest file.')]
 class CreateManifestCommand extends Command
 {
     protected static $defaultName = 'manifest:create';
@@ -33,6 +37,11 @@ class CreateManifestCommand extends Command
             ->addOption('secret', 's', InputOption::VALUE_NONE, 'Includes the secret in the manifest.xml.');
     }
 
+    /**
+     * @throws DOMElementCreationException
+     * @throws FilesystemException
+     * @throws \RuntimeException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $withSecret = $input->getOption('secret');
@@ -43,10 +52,14 @@ class CreateManifestCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @throws FilesystemException
+     * @throws \RuntimeException
+     */
     private function saveToFile(DOMDocument $document): void
     {
         if (empty($this->destinationPath)) {
-            throw new \Exception('No destination path given.');
+            throw new \RuntimeException('No destination path given.');
         }
 
         $adapter = new LocalFilesystemAdapter($this->rootPath);

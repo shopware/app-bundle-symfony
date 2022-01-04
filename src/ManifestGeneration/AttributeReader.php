@@ -2,15 +2,14 @@
 
 namespace Shopware\AppBundle\ManifestGeneration;
 
-use App\Attribute\ConfirmationRoute;
-use App\Attribute\RegistrationRoute;
-use Exception;
 use ReflectionObject;
 use Shopware\AppBundle\Attribute\ActionButton;
+use Shopware\AppBundle\Attribute\ConfirmationRoute;
 use Shopware\AppBundle\Attribute\MainModule;
 use Shopware\AppBundle\Attribute\Module;
 use Shopware\AppBundle\Attribute\PaymentFinalizeRoute;
 use Shopware\AppBundle\Attribute\PaymentRoute;
+use Shopware\AppBundle\Attribute\RegistrationRoute;
 use Shopware\AppBundle\Attribute\Webhook;
 use Shopware\AppBundle\Interfaces\PaymentMethodInterface;
 
@@ -49,6 +48,9 @@ class AttributeReader
     ) {
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     public function getRegistrationRoute(): ?RegistrationRoute
     {
         $this->extractRoutes();
@@ -56,6 +58,9 @@ class AttributeReader
         return $this->registrationRoute;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     public function getConfirmationRoute(): ?ConfirmationRoute
     {
         $this->extractRoutes();
@@ -65,6 +70,7 @@ class AttributeReader
 
     /**
      * @return Webhook[]
+     * @throws \RuntimeException
      */
     public function getWebhooks(): array
     {
@@ -73,6 +79,9 @@ class AttributeReader
         return $this->webhooks;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     public function getModules(): array
     {
         $this->extractRoutes();
@@ -80,6 +89,9 @@ class AttributeReader
         return $this->modules;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     public function getMainModule(): ?MainModule
     {
         $this->extractRoutes();
@@ -89,6 +101,7 @@ class AttributeReader
 
     /**
      * @return array<ActionButton>
+     * @throws \RuntimeException
      */
     public function getActionButtons(): array
     {
@@ -97,6 +110,9 @@ class AttributeReader
         return $this->actionButtons;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     public function getPaymentMethods(): array
     {
         $this->extractPaymentMethods();
@@ -104,6 +120,9 @@ class AttributeReader
         return $this->payments;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     private function extractRoutes(): void
     {
         if ($this->initializedRoutes) {
@@ -118,13 +137,13 @@ class AttributeReader
                     switch ($attribute->getName()) {
                         case RegistrationRoute::class:
                             if ($this->registrationRoute !== null) {
-                                throw new Exception('Duplicated registration route');
+                                throw new \RuntimeException('Duplicated registration route');
                             }
                             $this->registrationRoute = $attribute->newInstance();
                             break;
                         case ConfirmationRoute::class:
                             if ($this->confirmationRoute !== null) {
-                                throw new Exception('Duplicated confirmation route');
+                                throw new \RuntimeException('Duplicated confirmation route');
                             }
                             $this->confirmationRoute = $attribute->newInstance();
                             break;
@@ -136,7 +155,7 @@ class AttributeReader
                             break;
                         case MainModule::class:
                             if ($this->mainModule !== null) {
-                                throw new Exception('Duplicated main-module route');
+                                throw new \RuntimeException('Duplicated main-module route');
                             }
                             $this->mainModule = $attribute->newInstance();
                             break;
@@ -151,6 +170,9 @@ class AttributeReader
         $this->initializedRoutes = true;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     private function extractPaymentMethods(): void
     {
         if ($this->initializedPaymentMethods) {
@@ -168,17 +190,22 @@ class AttributeReader
                     switch ($attribute->getName()) {
                         case PaymentRoute::class:
                             if (\array_key_exists('paymentRoute', $this->payments[$paymentMethod->getIdentifier()])) {
-                                throw new Exception('Duplicated payment routes.');
+                                throw new \RuntimeException('Duplicated payment routes.');
                             }
 
-                            $this->payments[$paymentMethod->getIdentifier()]['paymentRoute'] = $attribute->newInstance();
+                            $this->payments[$paymentMethod->getIdentifier()]['paymentRoute'] = $attribute->newInstance(
+                            );
                             break;
                         case PaymentFinalizeRoute::class:
-                            if (\array_key_exists('paymentFinalizeRoute', $this->payments[$paymentMethod->getIdentifier()])) {
-                                throw new Exception('Duplicated payment finalize routes.');
+                            if (\array_key_exists(
+                                'paymentFinalizeRoute',
+                                $this->payments[$paymentMethod->getIdentifier()]
+                            )) {
+                                throw new \RuntimeException('Duplicated payment finalize routes.');
                             }
 
-                            $this->payments[$paymentMethod->getIdentifier()]['paymentFinalizeRoute'] = $attribute->newInstance();
+                            $this->payments[$paymentMethod->getIdentifier(
+                            )]['paymentFinalizeRoute'] = $attribute->newInstance();
                             break;
                     }
                 }

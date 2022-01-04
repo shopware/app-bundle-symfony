@@ -4,6 +4,7 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 
 class PermissionsGenerator
 {
@@ -14,6 +15,10 @@ class PermissionsGenerator
     ) {
     }
 
+    /**
+     * @throws \DOMException
+     * @throws DOMElementCreationException
+     */
     public function generate(DOMDocument $document): DOMElement
     {
         $elements = [];

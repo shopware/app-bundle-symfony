@@ -4,6 +4,7 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Shopware\AppBundle\Metadata;
 
 class MetaDataGenerator
@@ -15,6 +16,10 @@ class MetaDataGenerator
     ) {
     }
 
+    /**
+     * @throws \DOMException
+     * @throws DOMElementCreationException
+     */
     public function generate(DOMDocument $document): DOMElement
     {
         $elements = [];

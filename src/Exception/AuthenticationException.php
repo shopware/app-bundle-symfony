@@ -4,20 +4,11 @@ namespace Shopware\AppBundle\Exception;
 
 class AuthenticationException extends \Exception
 {
-    /**
-     * @var string
-     */
-    private $shopUrl;
+    private string $shopUrl;
 
-    /**
-     * @var string
-     */
-    private $apiKey;
+    private string $apiKey;
 
-    /**
-     * @var string
-     */
-    private $reason;
+    private string $reason;
 
     public function __construct(string $shopUrl, string $apiKey, string $reason)
     {

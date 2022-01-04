@@ -4,8 +4,8 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class ActionButtonGenerator
 {
@@ -19,6 +19,7 @@ class ActionButtonGenerator
 
     /**
      * @return array<DOMElement>
+     * @throws DOMElementCreationException
      */
     public function generate(DOMDocument $document): array
     {
@@ -27,7 +28,7 @@ class ActionButtonGenerator
         foreach ($this->attributeReader->getActionButtons() as $actionButton) {
             $element = $this->createElement($document, 'action-button');
 
-            $url = $this->urlGenerator->generate($actionButton->getName(), [], RouterInterface::ABSOLUTE_URL);
+            $url = $this->urlGenerator->generate($actionButton->getName(), [], UrlGeneratorInterface::ABSOLUTE_URL);
             $openNewTab = $actionButton->isOpenNewTab() ? 'true' : 'false';
 
             $element->append(...$this->getTranslatableElements($document, 'label', $actionButton->getLabel()));

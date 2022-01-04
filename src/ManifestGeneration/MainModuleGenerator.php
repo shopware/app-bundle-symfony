@@ -4,8 +4,8 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class MainModuleGenerator
 {
@@ -17,6 +17,9 @@ class MainModuleGenerator
     ) {
     }
 
+    /**
+     * @throws DOMElementCreationException
+     */
     public function generate(DOMDocument $document): ?DOMElement
     {
         $mainModule = $this->createElement($document, 'main-module');
@@ -27,7 +30,7 @@ class MainModuleGenerator
             return null;
         }
 
-        $url = $this->urlGenerator->generate($mainModuleRoute->getName(), [], RouterInterface::ABSOLUTE_URL);
+        $url = $this->urlGenerator->generate($mainModuleRoute->getName(), [], UrlGeneratorInterface::ABSOLUTE_URL);
         $mainModule->setAttribute('source', $url);
 
         return $mainModule;

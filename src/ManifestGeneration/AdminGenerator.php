@@ -4,6 +4,7 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 
 class AdminGenerator
 {
@@ -16,6 +17,9 @@ class AdminGenerator
     ) {
     }
 
+    /**
+     * @throws DOMElementCreationException
+     */
     public function generate(DOMDocument $document): DOMElement
     {
         $admin = $this->createElement($document, 'admin');

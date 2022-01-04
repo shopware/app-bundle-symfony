@@ -5,6 +5,7 @@ namespace Shopware\AppBundle\ManifestGeneration;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 
 class ManifestCreationService
 {
@@ -22,6 +23,9 @@ class ManifestCreationService
     ) {
     }
 
+    /**
+     * @throws DOMElementCreationException
+     */
     public function generate(bool $withSecret): DOMDocument
     {
         $document = new DOMDocument('1.0', 'UTF-8');

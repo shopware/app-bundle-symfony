@@ -4,8 +4,8 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class WebhooksGenerator
 {
@@ -17,6 +17,10 @@ class WebhooksGenerator
     ) {
     }
 
+    /**
+     * @throws \DOMException
+     * @throws DOMElementCreationException
+     */
     public function generate(DOMDocument $document): DOMElement
     {
         $webhooks = $this->createElement($document, 'webhooks');
@@ -24,16 +28,16 @@ class WebhooksGenerator
         $elements = [];
 
         foreach ($this->attributeReader->getWebhooks() as $webhook) {
-            $element = $this->createElement($document, 'webhook');
-
-            if (!$element) {
+            try {
+                $element = $this->createElement($document, 'webhook');
+            } catch (DOMElementCreationException) {
                 continue;
             }
 
             $element->setAttribute('name', $webhook->getName());
             $element->setAttribute('event', $webhook->getEvent());
 
-            $url = $this->urlGenerator->generate($webhook->getName(), [], RouterInterface::ABSOLUTE_URL);
+            $url = $this->urlGenerator->generate($webhook->getName(), [], UrlGeneratorInterface::ABSOLUTE_URL);
             $element->setAttribute('url', $url);
 
             $elements[] = $element;

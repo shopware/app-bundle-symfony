@@ -4,8 +4,8 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use Shopware\AppBundle\Exception\DOMElementCreationException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class SetupGenerator
 {
@@ -18,11 +18,19 @@ class SetupGenerator
     ) {
     }
 
+    /**
+     * @throws DOMElementCreationException
+     * @throws \Exception
+     */
     public function generate(DOMDocument $document, bool $withSecret): DOMElement
     {
         $setup = $this->createElement($document, 'setup');
 
-        $registrationRoute = $this->urlGenerator->generate($this->attributeReader->getRegistrationRoute()->getName(), [], RouterInterface::ABSOLUTE_URL);
+        $registrationRoute = $this->urlGenerator->generate(
+            $this->attributeReader->getRegistrationRoute()->getName(),
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
         $registrationUrl = $this->createElement($document, 'registrationUrl', $registrationRoute);
 
         if ($withSecret) {

@@ -4,7 +4,6 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMNode;
-use Exception;
 
 class CookiesGenerator
 {
@@ -23,11 +22,11 @@ class CookiesGenerator
         $xml = file_get_contents($this->cookiesPath);
 
         if (!$xml) {
-            throw new Exception(sprintf('Could not read xml from %s', $this->cookiesPath));
+            throw new \RuntimeException(sprintf('Could not read xml from %s', $this->cookiesPath));
         }
 
         if (!$tmpDocument->loadXML($xml)) {
-            throw new Exception(sprintf('Could not load xml from %s', $this->cookiesPath));
+            throw new \RuntimeException(sprintf('Could not load xml from %s', $this->cookiesPath));
         }
 
         $node = $tmpDocument->getElementsByTagName('cookies')->item(0);

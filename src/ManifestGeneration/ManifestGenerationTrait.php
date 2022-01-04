@@ -8,6 +8,9 @@ use Shopware\AppBundle\Exception\DOMElementCreationException;
 
 trait ManifestGenerationTrait
 {
+    /**
+     * @throws \DOMException
+     */
     private function getTranslatableElements(DOMDocument $document, string $elementName, array $data): array
     {
         $elements = [];
@@ -27,6 +30,10 @@ trait ManifestGenerationTrait
         return $elements;
     }
 
+    /**
+     * @throws \DOMException
+     * @throws DOMElementCreationException
+     */
     private function createElement(DOMDocument $document, string $elementName, string $value = ''): DOMElement
     {
         $element = $document->createElement($elementName, $value);

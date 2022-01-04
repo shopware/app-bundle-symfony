@@ -4,6 +4,7 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMElement;
+use DOMException;
 
 class ModuleGenerator
 {
@@ -16,6 +17,7 @@ class ModuleGenerator
 
     /**
      * @return array<DOMElement>
+     * @throws DOMException
      */
     public function generate(DOMDocument $document): array
     {

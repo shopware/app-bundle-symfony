@@ -4,7 +4,6 @@ namespace Shopware\AppBundle\ManifestGeneration;
 
 use DOMDocument;
 use DOMNode;
-use Exception;
 
 class CustomFieldsGenerator
 {
@@ -24,11 +23,11 @@ class CustomFieldsGenerator
         $xml = file_get_contents($this->customFieldsPath);
 
         if (!$xml) {
-            throw new Exception(sprintf('Could not read xml from %s', $this->customFieldsPath));
+            throw new \RuntimeException(sprintf('Could not read xml from %s', $this->customFieldsPath));
         }
 
         if (!$tmpDocument->loadXML($xml)) {
-            throw new Exception(sprintf('Could not load xml from %s', $this->customFieldsPath));
+            throw new \RuntimeException(sprintf('Could not load xml from %s', $this->customFieldsPath));
         }
 
         $node = $tmpDocument->getElementsByTagName('custom-fields')->item(0);
