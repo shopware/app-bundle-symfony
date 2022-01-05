@@ -3,10 +3,8 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <!-- TODO GTS-151: remove public status once we use the metadata to create meanifest.xml -->
         <service id="Shopware\AppBundle\Metadata" public="true">
             <factory class="Shopware\AppBundle\Metadata" method="fromArray"/>
-
             <argument>%shopware_app.metadata%</argument>
         </service>
 
@@ -34,7 +32,7 @@
 
         <service id="Shopware\AppBundle\Command\CreateManifestCommand">
             <argument type="service" id="Shopware\AppBundle\ManifestGeneration\ManifestCreationService"/>
-            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Shopware\AppBundle\Filesystem\ProjectDirectoryProvider"/>
             <argument>%shopware_app.manifestDestinationPath%</argument>
 
             <tag name="console.command"/>
@@ -106,6 +104,10 @@
         <service id="Shopware\AppBundle\ManifestGeneration\PaymentsGenerator">
             <argument type="service" id="Shopware\AppBundle\ManifestGeneration\AttributeReader"/>
             <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
+        </service>
+
+        <service id="Shopware\AppBundle\Filesystem\ProjectDirectoryProvider">
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <instanceof id="Symfony\Bundle\FrameworkBundle\Controller\AbstractController" autowire="true">

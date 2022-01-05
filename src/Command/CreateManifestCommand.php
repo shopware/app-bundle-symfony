@@ -3,10 +3,9 @@
 namespace Shopware\AppBundle\Command;
 
 use DOMDocument;
-use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Shopware\AppBundle\Exception\DOMElementCreationException;
+use Shopware\AppBundle\Filesystem\ProjectDirectoryProvider;
 use Shopware\AppBundle\ManifestGeneration\ManifestCreationService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +22,7 @@ class CreateManifestCommand extends Command
 
     public function __construct(
         private ManifestCreationService $manifestCreationService,
-        private string $rootPath,
+        private ProjectDirectoryProvider $projectDirectoryAdapter,
         private string $destinationPath
     ) {
         parent::__construct(self::$defaultName);
@@ -62,9 +61,6 @@ class CreateManifestCommand extends Command
             throw new \RuntimeException('No destination path given.');
         }
 
-        $adapter = new LocalFilesystemAdapter($this->rootPath);
-        $filesystem = new Filesystem($adapter);
-
-        $filesystem->write($this->destinationPath, $document->saveXML());
+        $this->projectDirectoryAdapter->getFileSystem()->write($this->destinationPath, $document->saveXML());
     }
 }
