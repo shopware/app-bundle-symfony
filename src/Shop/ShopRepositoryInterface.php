@@ -12,7 +12,7 @@ interface ShopRepositoryInterface
     /**
      * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
      */
-    public function getShopFromId(string $shopId): ShopInterface|ShopEntity;
+    public function getShopFromId(string $shopId): ShopInterface|ShopEntity|null;
 
     /**
      * @deprecated tag:v1.0.0 - Will only accept ShopInterface as paramater
