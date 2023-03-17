@@ -8,7 +8,7 @@ use Shopware\AppBundle\Attribute\RegistrationRoute;
 
 class RegistrationRouteTest extends TestCase
 {
-    #[RegistrationRoute('/register', name: 'shopware_app.register', methods: ['GET'])]
+    #[RegistrationRoute(name: 'shopware_app.register', path: '/register')]
     public function testRegistrationRouteAttribute(): void
     {
         $reflectionClass = new ReflectionClass($this);
@@ -17,11 +17,8 @@ class RegistrationRouteTest extends TestCase
         $reflectionAttribute = $reflectionMethod->getAttributes(RegistrationRoute::class);
 
         static::assertEquals($reflectionAttribute[0]->getArguments(), [
-            '0' => '/register',
+            'path' => '/register',
             'name' => 'shopware_app.register',
-            'methods' => [
-                'GET',
-            ],
         ]);
     }
 }
