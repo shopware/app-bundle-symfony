@@ -14,6 +14,10 @@ class RequestVerifier
 
     private const SHOPWARE_APP_SIGNATURE_HEADER = 'shopware-app-signature';
 
+    /**
+     * @throws SignatureValidationException
+     * @throws SignatureNotFoundException
+     */
     public function authenticateRegistrationRequest(RequestInterface $request, string $appSecret): void
     {
         $signature = $this->getSignatureFromHeader($request, self::SHOPWARE_APP_SIGNATURE_HEADER);
@@ -28,6 +32,10 @@ class RequestVerifier
         );
     }
 
+    /**
+     * @throws SignatureValidationException
+     * @throws SignatureNotFoundException
+     */
     public function authenticatePostRequest(RequestInterface $request, ShopInterface $shop): void
     {
         $signature = $this->getSignatureFromHeader($request, self::SHOPWARE_SHOP_SIGNATURE_HEADER);
@@ -40,6 +48,10 @@ class RequestVerifier
         );
     }
 
+    /**
+     * @throws SignatureValidationException
+     * @throws SignatureNotFoundException
+     */
     public function authenticateGetRequest(RequestInterface $request, ShopInterface $shop): void
     {
         $signature = $this->getSignatureFromQuery($request);
@@ -52,6 +64,9 @@ class RequestVerifier
         );
     }
 
+    /**
+     * @throws SignatureNotFoundException
+     */
     private function getSignatureFromQuery(RequestInterface $request): string
     {
         $queries = Query::parse($request->getUri()->getQuery());
@@ -63,6 +78,9 @@ class RequestVerifier
         return $queries[self::SHOPWARE_SHOP_SIGNATURE_HEADER];
     }
 
+    /**
+     * @throws SignatureNotFoundException
+     */
     private function getSignatureFromHeader(RequestInterface $request, string $headerName): string
     {
         $signatureHeader = $request->getHeader($headerName);
@@ -74,8 +92,15 @@ class RequestVerifier
         return $signatureHeader[0];
     }
 
-    private function verifySignature(RequestInterface $request, string $secret, string $message, string $signature): void
-    {
+    /**
+     * @throws SignatureValidationException
+     */
+    private function verifySignature(
+        RequestInterface $request,
+        string $secret,
+        string $message,
+        string $signature
+    ): void {
         $hmac = hash_hmac('sha256', $message, $secret);
 
         if (!hash_equals($hmac, $signature)) {

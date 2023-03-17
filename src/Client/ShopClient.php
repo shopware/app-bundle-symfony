@@ -4,6 +4,7 @@ namespace Shopware\AppBundle\Client;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,16 +27,22 @@ class ShopClient implements ClientInterface
         $this->credentials = null;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws RegistrationNotCompletedException
+     */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         if ($this->credentials === null) {
             $this->credentials = $this->createToken();
         }
 
-        $response = $this->client->sendRequest($request->withHeader(
-            self::AUTH_HEADER,
-            "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
-        ));
+        $response = $this->client->sendRequest(
+            $request->withHeader(
+                self::AUTH_HEADER,
+                "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
+            )
+        );
 
         if ($response->getStatusCode() !== 401) {
             return $response;
@@ -44,12 +51,19 @@ class ShopClient implements ClientInterface
         // retry request with updated credentials
         $this->credentials = $this->createToken();
 
-        return $this->client->sendRequest($request->withHeader(
-            self::AUTH_HEADER,
-            "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
-        ));
+        return $this->client->sendRequest(
+            $request->withHeader(
+                self::AUTH_HEADER,
+                "{$this->credentials->getTokenType()} {$this->credentials->getAccessToken()}"
+            )
+        );
     }
 
+    /**
+     * @throws AuthenticationException
+     * @throws RegistrationNotCompletedException
+     * @throws \JsonException
+     */
     private function createToken(): Credentials
     {
         if (!$this->shop->getApiKey() || !$this->shop->getSecretKey()) {
@@ -64,12 +78,17 @@ class ShopClient implements ClientInterface
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->shop->getApiKey(),
                 'client_secret' => $this->shop->getSecretKey(),
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         return $this->requestToken($authRequest);
     }
 
+    /**
+     * @throws AuthenticationException
+     * @throws ClientExceptionInterface
+     * @throws \JsonException
+     */
     private function requestToken(RequestInterface $authRequest): Credentials
     {
         $authenticationResponse = $this->client

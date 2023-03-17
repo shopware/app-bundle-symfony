@@ -12,9 +12,12 @@ class Credentials
     ) {
     }
 
+    /**
+     * @throws \JsonException
+     */
     public static function fromAuthResponse(ResponseInterface $response): self
     {
-        $content = json_decode($response->getBody()->getContents(), true);
+        $content = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
         return new self(
             $content['token_type'],
