@@ -66,6 +66,10 @@ class RegistrationService
 
         $shop = $this->shopRepository->getShopFromId($requestContent['shopId']);
 
+        if (!$shop) {
+            throw new SignatureValidationException($request);
+        }
+
         $request->getBody()->rewind();
 
         $this->requestVerifier->authenticatePostRequest($request, $shop);
