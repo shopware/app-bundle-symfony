@@ -11,7 +11,6 @@ class Webhook extends Route
     private const METHODS = ['POST'];
 
     /**
-     * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
      * @param array|string|null $path
      * @param string[]          $requirements
      * @param string[]|string   $schemes
@@ -19,7 +18,6 @@ class Webhook extends Route
     public function __construct(
         string $name,
         private string $event,
-        $data = [],
         $path = null,
         array $requirements = [],
         array $options = [],
@@ -34,7 +32,7 @@ class Webhook extends Route
         ?bool $stateless = null,
         ?string $env = null
     ) {
-        parent::__construct($data, $path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
+        parent::__construct($path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
     }
 
     public function getEvent(): string

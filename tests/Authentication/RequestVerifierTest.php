@@ -10,12 +10,15 @@ use Shopware\AppBundle\Authentication\RequestVerifier;
 use Shopware\AppBundle\Exception\SignatureNotFoundException;
 use Shopware\AppBundle\Exception\SignatureValidationException;
 use Shopware\AppBundle\Shop\ShopEntity;
+use Shopware\AppBundle\Shop\ShopInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class RequestVerifierTest extends KernelTestCase
 {
     private const SECRET = 'app-secret';
     private RequestVerifier $requestVerifier;
+
+    private ShopInterface $shop;
 
     public function setUp(): void
     {

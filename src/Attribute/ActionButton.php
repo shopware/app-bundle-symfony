@@ -12,7 +12,6 @@ class ActionButton extends Route
 
     /**
      * @param array<string, string> $label        array with language => translation
-     * @param array|string          $data         data array managed by the Doctrine Annotations library or the path
      * @param array|string|null     $path
      * @param string[]              $requirements
      * @param string[]|string       $schemes
@@ -23,7 +22,6 @@ class ActionButton extends Route
         private string $view,
         private array $label,
         private bool $openNewTab = false,
-        $data = [],
         $path = null,
         ?string $name = null,
         array $requirements = [],
@@ -39,7 +37,7 @@ class ActionButton extends Route
         ?bool $stateless = null,
         ?string $env = null
     ) {
-        parent::__construct($data, $path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
+        parent::__construct($path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
     }
 
     public function getAction(): string

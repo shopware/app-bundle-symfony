@@ -11,7 +11,6 @@ class MainModule extends Route
     private const METHODS = ['GET'];
 
     /**
-     * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
      * @param array|string|null $path
      * @param string[]          $requirements
      * @param string[]|string   $schemes
@@ -19,7 +18,6 @@ class MainModule extends Route
      * @throws \BadMethodCallException
      */
     public function __construct(
-        $data = [],
         $path = null,
         ?string $name = null,
         array $requirements = [],
@@ -35,6 +33,6 @@ class MainModule extends Route
         ?bool $stateless = null,
         ?string $env = null
     ) {
-        parent::__construct($data, $path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
+        parent::__construct($path, $name, $requirements, $options, $defaults, $host, self::METHODS, $schemes, $condition, $priority, $locale, $format, $utf8, $stateless, $env);
     }
 }
