@@ -29,13 +29,17 @@ class RegistrationService
 
         $queries = Query::parse($request->getUri()->getQuery());
 
-        $shop = new ShopEntity(
-            $queries['shop-id'],
-            $queries['shop-url'],
-            $this->shopSecretGeneratorInterface->generate()
-        );
+        $shop = $this->shopRepository->getShopFromId($queries['shop-id']);
 
-        $this->shopRepository->createShop($shop);
+        if ($shop === null) {
+            $shop = new ShopEntity(
+                $queries['shop-id'],
+                $queries['shop-url'],
+                $this->shopSecretGeneratorInterface->generate()
+            );
+
+            $this->shopRepository->createShop($shop);
+        }
 
         return [
             'proof' => $this->responseSigner->getRegistrationSignature($shop, $this->appSecret),
