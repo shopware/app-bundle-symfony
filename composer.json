@@ -1,6 +1,5 @@
 {
     "name": "shopware/app-bundle",
-    "version": "1.0.0",
     "description": "Symfony bundle to develop shopware apps easy",
     "type": "symfony-bundle",
     "license": "MIT",
