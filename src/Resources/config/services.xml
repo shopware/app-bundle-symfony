@@ -4,33 +4,65 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
 
-        <!-- TODO GTS-151: remove public status once we use the metadata to create meanifest.xml -->
-        <service id="Shopware\AppBundle\Metadata" public="true">
-            <factory class="Shopware\AppBundle\Metadata" method="fromArray"/>
-
-            <argument>%shopware_app.metadata%</argument>
+        <service id="Shopware\AppBundle\Registration\AppConfigurationFactory">
+            <argument>%shopware_app.name%</argument>
+            <argument>%shopware_app.secret%</argument>
+            <argument>%shopware_app.confirmation_url%</argument>
+            <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
         </service>
 
-        <service id="Shopware\AppBundle\Authentication\RequestVerifier"/>
+        <service id="Shopware\App\SDK\AppConfiguration">
+            <factory service="Shopware\AppBundle\Registration\AppConfigurationFactory" method="newConfiguration"/>
+        </service>
 
-        <service id="Shopware\AppBundle\Authentication\ResponseSigner">
-            <argument type="service" id="Shopware\AppBundle\Metadata"/>
+        <service id="Shopware\App\SDK\AppLifecycle">
+            <argument type="service" id="Shopware\App\SDK\Registration\RegistrationService"/>
+            <argument type="service" id="Shopware\App\SDK\Shop\ShopResolver"/>
+            <argument type="service" id="Shopware\App\SDK\Shop\ShopRepositoryInterface"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+            <argument type="service" id="Psr\EventDispatcher\EventDispatcherInterface"/>
         </service>
 
         <service id="Shopware\AppBundle\Client\ClientFactoryInterface" class="Shopware\AppBundle\Client\GuzzleClientFactory"/>
 
-        <service id="Shopware\AppBundle\Registration\RegistrationService">
-            <argument>%shopware_app.setup.secret%</argument>
-            <argument type="service" id="Shopware\AppBundle\Shop\ShopRepositoryInterface"/>
-            <argument type="service" id="Shopware\AppBundle\Authentication\RequestVerifier"/>
-            <argument type="service" id="Shopware\AppBundle\Authentication\ResponseSigner"/>
-            <argument type="service" id="Shopware\AppBundle\Registration\ShopSecretGeneratorInterface"/>
+        <service id="Shopware\App\SDK\Authentication\RequestVerifier">
         </service>
 
-        <service id="Shopware\AppBundle\Registration\ShopSecretGeneratorInterface"
-                 class="Shopware\AppBundle\Registration\RandomStringShopSecretGenerator"/>
+        <service id="Shopware\App\SDK\Authentication\ResponseSigner">
+        </service>
 
-        <service id="Shopware\AppBundle\Shop\ShopRepositoryInterface"
-                 class="Shopware\AppBundle\Shop\EmptyShopRepository"/>
+        <service id="Shopware\App\SDK\Shop\ShopResolver">
+            <argument type="service" id="Shopware\App\SDK\Shop\ShopRepositoryInterface"/>
+        </service>
+
+        <service id="Shopware\App\SDK\Registration\RegistrationService">
+            <argument type="service" id="Shopware\App\SDK\AppConfiguration"/>
+            <argument type="service" id="Shopware\App\SDK\Shop\ShopRepositoryInterface"/>
+            <argument type="service" id="Shopware\App\SDK\Authentication\RequestVerifier"/>
+            <argument type="service" id="Shopware\App\SDK\Authentication\ResponseSigner"/>
+            <argument type="service" id="Shopware\App\SDK\Registration\ShopSecretGeneratorInterface"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+            <argument type="service" id="Psr\EventDispatcher\EventDispatcherInterface"/>
+        </service>
+
+        <service id="Shopware\App\SDK\Registration\ShopSecretGeneratorInterface"
+                 class="Shopware\App\SDK\Registration\RandomStringShopSecretGenerator"/>
+
+        <service id="Shopware\App\SDK\Shop\ShopRepositoryInterface" class="Shopware\AppBundle\Entity\ShopRepositoryBridge">
+            <argument/>
+            <argument type="service" id="Doctrine\Persistence\ManagerRegistry"/>
+        </service>
+
+        <service id="Shopware\AppBundle\Controller\LifecycleController" public="true">
+            <argument type="service" id="Shopware\App\SDK\Registration\RegistrationService"/>
+            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <tag name="controller.service_arguments"/>
+        </service>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory">
+        </service>
     </services>
 </container>

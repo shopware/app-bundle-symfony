@@ -1,0 +1,7 @@
+parameters:
+    phpVersion: 80100
+    level: max
+    paths:
+        - src
+    ignoreErrors:
+        - '#Cannot call method .*Node\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null.#'
