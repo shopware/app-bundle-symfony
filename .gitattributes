@@ -9,3 +9,9 @@
 /devenv.nix export-ignore
 /devenv.lock export-ignore
 /.envrc export-ignore
+/ecs.php export-ignore
+/phpunit.xml.dist export-ignore
+/composer.lock export-ignore
+/README.md export-ignore
+/LICENSE export-ignore
+/.gitignore export-ignore
