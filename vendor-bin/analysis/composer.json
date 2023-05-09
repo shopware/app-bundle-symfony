@@ -1,6 +1,0 @@
-{
-    "require-dev": {
-        "vimeo/psalm": "^4.8",
-        "symplify/easy-coding-standard": "^9.3"
-    }
-}

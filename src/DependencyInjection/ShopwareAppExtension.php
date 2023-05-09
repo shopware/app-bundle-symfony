@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Shopware\AppBundle\DependencyInjection;
 
+use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -12,7 +15,6 @@ class ShopwareAppExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
-        $this->addConfigToParameters($container, $this->getAlias(), $config);
 
         $loader = new XmlFileLoader(
             $container,
@@ -20,29 +22,12 @@ class ShopwareAppExtension extends Extension
         );
 
         $loader->load('services.xml');
-    }
 
-    private function addConfigToParameters(ContainerBuilder $container, string $prefix, array $options): void
-    {
-        foreach ($options as $key => $option) {
-            $key = "{$prefix}.{$key}";
+        $container->getDefinition(ShopRepositoryInterface::class)
+            ->replaceArgument(0, $config['shop_class']);
 
-            // set metadata and permissions at once
-            if ($key === 'shopware_app.metadata' || $key === 'shopware_app.permissions') {
-                $container->setParameter($key, $option);
-
-                continue;
-            }
-
-            // add values from arrays in single parameters
-            if (\is_array($option)) {
-                $this->addConfigToParameters($container, $key, $option);
-
-                continue;
-            }
-
-            // set scalar values
-            $container->setParameter($key, $option);
-        }
+        $container->setParameter('shopware_app.confirmation_url', $config['confirmation_url']);
+        $container->setParameter('shopware_app.secret', $config['secret']);
+        $container->setParameter('shopware_app.name', $config['name']);
     }
 }

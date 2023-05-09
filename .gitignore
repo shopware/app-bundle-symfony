@@ -1,9 +1,17 @@
-build
-var
-**/vendor/
-.idea
+/.idea
+/examples/shops
 
-phpunit.xml
-.phpunit.result.cache
+/vendor
+/.php-cs-fixer.cache
+/.phpunit.cache
 
-composer.lock
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+

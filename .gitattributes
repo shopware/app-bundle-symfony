@@ -1,0 +1,11 @@
+/.github export-ignore
+/tests export-ignore
+/docs export-ignore
+/composer.lock export-ignore
+/phpstan.neon.dist export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/phpunit.xml export-ignore
+/examples export-ignore
+/devenv.nix export-ignore
+/devenv.lock export-ignore
+/.envrc export-ignore
