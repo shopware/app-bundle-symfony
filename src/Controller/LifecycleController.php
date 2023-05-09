@@ -5,29 +5,40 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\Controller;
 
 use Psr\Http\Message\RequestInterface;
-use Shopware\App\SDK\Registration\RegistrationService;
-use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
+use Shopware\App\SDK\AppLifecycle;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 
-class LifecycleController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
+#[AsController]
+class LifecycleController
 {
     public function __construct(
-        private readonly RegistrationService   $registrationService,
-        private readonly HttpFoundationFactoryInterface $symfonyHttpFactory
+        private readonly AppLifecycle $appLifecycle
     ) {
     }
 
-    public function register(RequestInterface $request): Response
+    public function register(RequestInterface $request): ResponseInterface
     {
-        $proof = $this->registrationService->register($request);
-
-        return $this->symfonyHttpFactory->createResponse($proof);
+        return $this->appLifecycle->register($request);
     }
 
-    public function confirm(RequestInterface $request): Response
+    public function registerConfirm(RequestInterface $request): ResponseInterface
     {
-        $proof = $this->registrationService->registerConfirm($request);
+        return $this->appLifecycle->registerConfirm($request);
+    }
 
-        return $this->symfonyHttpFactory->createResponse($proof);
+    public function activate(RequestInterface $request): ResponseInterface
+    {
+        return $this->appLifecycle->activate($request);
+    }
+
+    public function deactivate(RequestInterface $request): ResponseInterface
+    {
+        return $this->appLifecycle->deactivate($request);
+    }
+
+    public function delete(RequestInterface $request): ResponseInterface
+    {
+        return $this->appLifecycle->delete($request);
     }
 }

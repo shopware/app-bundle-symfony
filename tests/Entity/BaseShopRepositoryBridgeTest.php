@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\Test\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Shopware\AppBundle\Entity\Shop;
+use Shopware\AppBundle\Entity\AbstractShop;
 use Shopware\AppBundle\Entity\ShopRepositoryBridge;
 use PHPUnit\Framework\TestCase;
 
-class ShopRepositoryBridgeTest extends TestCase
+class BaseShopRepositoryBridgeTest extends TestCase
 {
     public function testConstructionFailsWithIncorrectShopEntity()
     {
@@ -30,7 +31,7 @@ class ShopRepositoryBridgeTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
 
-        $customShop = new class ('', '', '') extends Shop {
+        $customShop = new class ('', '', '') extends AbstractShop {
             public function __construct(string $shopId, string $shopUrl, string $shopSecret)
             {
                 parent::__construct($shopId, $shopUrl, $shopSecret);
@@ -46,7 +47,7 @@ class ShopRepositoryBridgeTest extends TestCase
 
     public function testBridgeCanConstructCustomShopEntity()
     {
-        $customShop = new class ('', '', '') extends Shop {
+        $customShop = new class ('', '', '') extends AbstractShop {
             public function __construct(string $shopId, string $shopUrl, string $shopSecret)
             {
                 parent::__construct($shopId, $shopUrl, $shopSecret);
@@ -56,7 +57,7 @@ class ShopRepositoryBridgeTest extends TestCase
         $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->method('getManagerForClass')
             ->willReturn(
-                $this->createMock(\Doctrine\ORM\EntityManagerInterface::class)
+                $this->createMock(EntityManagerInterface::class)
             );
 
         $bridge = new ShopRepositoryBridge(

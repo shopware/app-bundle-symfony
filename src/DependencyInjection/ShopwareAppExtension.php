@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\DependencyInjection;
 
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
+use Shopware\AppBundle\Registration\AppConfigurationFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -26,8 +27,9 @@ class ShopwareAppExtension extends Extension
         $container->getDefinition(ShopRepositoryInterface::class)
             ->replaceArgument(0, $config['shop_class']);
 
-        $container->setParameter('shopware_app.confirmation_url', $config['confirmation_url']);
-        $container->setParameter('shopware_app.secret', $config['secret']);
-        $container->setParameter('shopware_app.name', $config['name']);
+        $container->getDefinition(AppConfigurationFactory::class)
+            ->replaceArgument(0, $config['name'])
+            ->replaceArgument(1, $config['secret'])
+            ->replaceArgument(2, $config['confirmation_url']);
     }
 }

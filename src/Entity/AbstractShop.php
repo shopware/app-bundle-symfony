@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\MappedSuperclass;
 use Shopware\App\SDK\Shop\ShopInterface;
 
 #[MappedSuperclass]
-abstract class Shop implements ShopInterface
+abstract class AbstractShop implements ShopInterface
 {
     #[Id, Column(type: 'string')]
     protected string $shopId;
@@ -62,49 +62,33 @@ abstract class Shop implements ShopInterface
         return $this->shopClientSecret;
     }
 
-    public function withShopApiCredentials(string $clientId, string $clientSecret): ShopInterface
+    public function setShopApiCredentials(string $clientId, string $clientSecret): ShopInterface
     {
-        $result = clone $this;
-        $result->shopClientId = $clientId;
-        $result->shopClientSecret = $clientSecret;
+        $this->shopClientId = $clientId;
+        $this->shopClientSecret = $clientSecret;
 
-        return $result;
+        return $this;
     }
 
-    public function withShopUrl(string $url): ShopInterface
+    public function setShopActive(bool $active): ShopInterface
     {
-        $result = clone $this;
-        $result->shopUrl = $url;
+        $this->shopActive = $active;
 
-        return $result;
+        return $this;
     }
 
-    public function withShopActive(bool $active): ShopInterface
+    public function setShopUrl(string $url): ShopInterface
     {
-        $result = clone $this;
-        $result->shopActive = $active;
+        $this->shopUrl = $url;
 
-        return $result;
+        return $this;
     }
 
-    public function setShopUrl(string $shopUrl): void
-    {
-        $this->shopUrl = $shopUrl;
-    }
-
-    public function setShopSecret(string $shopSecret): void
+    public function setShopSecret(string $shopSecret): ShopInterface
     {
         $this->shopSecret = $shopSecret;
-    }
 
-    public function setShopClientId(?string $shopClientId): void
-    {
-        $this->shopClientId = $shopClientId;
-    }
-
-    public function setShopClientSecret(?string $shopClientSecret): void
-    {
-        $this->shopClientSecret = $shopClientSecret;
+        return $this;
     }
 
     public function isShopActive(): bool

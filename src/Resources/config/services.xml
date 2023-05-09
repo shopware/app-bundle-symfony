@@ -3,11 +3,13 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <defaults autowire="true" autoconfigure="true"/>
 
         <service id="Shopware\AppBundle\Registration\AppConfigurationFactory">
-            <argument>%shopware_app.name%</argument>
-            <argument>%shopware_app.secret%</argument>
-            <argument>%shopware_app.confirmation_url%</argument>
+            <!-- Will be filled by \Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::load -->
+            <argument/>
+            <argument/>
+            <argument/>
             <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
         </service>
 
@@ -23,13 +25,9 @@
             <argument type="service" id="Psr\EventDispatcher\EventDispatcherInterface"/>
         </service>
 
-        <service id="Shopware\AppBundle\Client\ClientFactoryInterface" class="Shopware\AppBundle\Client\GuzzleClientFactory"/>
-
-        <service id="Shopware\App\SDK\Authentication\RequestVerifier">
-        </service>
-
-        <service id="Shopware\App\SDK\Authentication\ResponseSigner">
-        </service>
+        <service id="Shopware\App\SDK\Authentication\RequestVerifier"/>
+        <service id="Shopware\App\SDK\Authentication\ResponseSigner"/>
+        <service id="Shopware\App\SDK\Context\ContextResolver"/>
 
         <service id="Shopware\App\SDK\Shop\ShopResolver">
             <argument type="service" id="Shopware\App\SDK\Shop\ShopRepositoryInterface"/>
@@ -54,15 +52,16 @@
         </service>
 
         <service id="Shopware\AppBundle\Controller\LifecycleController" public="true">
-            <argument type="service" id="Shopware\App\SDK\Registration\RegistrationService"/>
-            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface"/>
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
+            <argument type="service" id="Shopware\App\SDK\AppLifecycle"/>
             <tag name="controller.service_arguments"/>
         </service>
 
-        <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory">
-        </service>
+        <service id="Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver"/>
+        <service id="Shopware\AppBundle\EventListener\ResponseSignerListener"/>
+
+        <!-- PSR Integration -->
+        <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
+        <service id="Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory"/>
+        <service id="Symfony\Bridge\PsrHttpMessage\EventListener\PsrResponseListener"/>
     </services>
 </container>

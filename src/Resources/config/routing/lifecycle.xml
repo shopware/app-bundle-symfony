@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing https://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="shopware_app_lifecycle_register" path="/lifecycle/register" methods="GET">
+        <default key="_controller">\Shopware\AppBundle\Controller\LifecycleController::register</default>
+    </route>
+
+    <route id="shopware_app_lifecycle_confirm" path="/lifecycle/register-confirm" methods="POST">
+        <default key="_controller">\Shopware\AppBundle\Controller\LifecycleController::registerConfirm</default>
+    </route>
+
+    <route id="shopware_app_lifecycle_activate" path="/lifecycle/activate" methods="POST">
+        <default key="_controller">\Shopware\AppBundle\Controller\LifecycleController::activate</default>
+    </route>
+
+    <route id="shopware_app_lifecycle_deactivate" path="/lifecycle/deactivate" methods="POST">
+        <default key="_controller">\Shopware\AppBundle\Controller\LifecycleController::deactivate</default>
+    </route>
+
+    <route id="shopware_app_lifecycle_delete" path="/lifecycle/delete" methods="POST">
+        <default key="_controller">\Shopware\AppBundle\Controller\LifecycleController::delete</default>
+    </route>
+</routes>
