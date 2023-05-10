@@ -6,7 +6,6 @@ namespace Shopware\AppBundle\Entity;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use PHPUnit\Framework\Attributes\CodeCoverageIgnore;
 use Shopware\App\SDK\Exception\ShopNotFoundException;
 use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
@@ -20,8 +19,8 @@ class ShopRepositoryBridge implements ShopRepositoryInterface
      * @param class-string<AbstractShop> $entityClass
      */
     public function __construct(
-        private string $entityClass,
-        private ManagerRegistry $registry
+        private readonly string $entityClass,
+        private readonly ManagerRegistry $registry
     ) {
         if (!is_subclass_of($this->entityClass, AbstractShop::class)) {
             throw new \InvalidArgumentException(sprintf('The shop entity class "%s" must extend "%s"', $this->entityClass, AbstractShop::class));
@@ -36,9 +35,6 @@ class ShopRepositoryBridge implements ShopRepositoryInterface
         return new $this->entityClass($shopId, $shopUrl, $shopSecret);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function createShop(ShopInterface $shop): void
     {
         $manager = $this->getManager();
@@ -46,25 +42,16 @@ class ShopRepositoryBridge implements ShopRepositoryInterface
         $manager->flush();
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function getShopFromId(string $shopId): ?ShopInterface
     {
         return $this->registry->getRepository($this->entityClass)->find($shopId);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function updateShop(ShopInterface $shop): void
     {
         $this->registry->getManager()->flush();
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function deleteShop(string $shopId): void
     {
         $manager = $this->getManager();
@@ -76,9 +63,6 @@ class ShopRepositoryBridge implements ShopRepositoryInterface
         $manager->flush();
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     private function getManager(): ObjectManager
     {
         $manager = $this->registry->getManagerForClass($this->entityClass);

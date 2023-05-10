@@ -74,7 +74,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
 
         $psrRequest = $request->attributes->get(AppRequest::PSR_REQUEST_ATTRIBUTE);
 
-        if ($psrRequest === null || !($psrRequest instanceof RequestInterface)) {
+        if (!$psrRequest instanceof RequestInterface) {
             $psrRequest = $this->httpFoundationFactory->createRequest($request);
             $request->attributes->set(AppRequest::PSR_REQUEST_ATTRIBUTE, $psrRequest);
         }
@@ -86,7 +86,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
 
         $shop = $request->attributes->get(AppRequest::SHOP_ATTRIBUTE);
 
-        if ($shop === null || !($shop instanceof ShopInterface)) {
+        if (!$shop instanceof ShopInterface) {
             $shop = $this->shopResolver->resolveShop($psrRequest);
             $request->attributes->set(AppRequest::SHOP_ATTRIBUTE, $shop);
         }

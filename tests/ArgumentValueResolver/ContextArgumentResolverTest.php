@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\Test\ArgumentValueResolver;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
+use Shopware\App\SDK\Authentication\RequestVerifier;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Module\ModuleAction;
@@ -20,6 +22,9 @@ use Shopware\App\SDK\Context\TaxProvider\TaxProviderAction;
 use Shopware\App\SDK\Context\Webhook\WebhookAction;
 use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\App\SDK\Shop\ShopResolver;
+use Shopware\App\SDK\Test\MockShop;
+use Shopware\App\SDK\Test\MockShopRepository;
+use Shopware\AppBundle\AppRequest;
 use Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -50,9 +55,9 @@ class ContextArgumentResolverTest extends TestCase
     public function testSupportedTypes(string $type, bool $expected): void
     {
         $resolver = new ContextArgumentResolver(
-            $this->createMock(ContextResolver::class),
-            $this->createMock(ShopResolver::class),
-            $this->createMock(HttpMessageFactoryInterface::class)
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            static::createMock(HttpMessageFactoryInterface::class)
         );
 
         static::assertSame($expected, $resolver->supports(new Request(), new ArgumentMetadata('test', $type, false, false, null)));
@@ -63,8 +68,8 @@ class ContextArgumentResolverTest extends TestCase
         $request = $this->getRequest();
 
         $resolver = new ContextArgumentResolver(
-            $this->createMock(ContextResolver::class),
-            $this->createMock(ShopResolver::class),
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
             $this->getPsrHttpFactory()
         );
 
@@ -79,8 +84,8 @@ class ContextArgumentResolverTest extends TestCase
         $request = $this->getRequest();
 
         $resolver = new ContextArgumentResolver(
-            $this->createMock(ContextResolver::class),
-            $this->createMock(ShopResolver::class),
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
             $this->getPsrHttpFactory()
         );
 
@@ -91,10 +96,10 @@ class ContextArgumentResolverTest extends TestCase
     {
         $request = $this->getRequest();
 
-        $shopResolver = $this->createMock(ShopResolver::class);
-        $shopResolver->method('resolveShop')->willReturn($this->createMock(ShopInterface::class));
+        $shopResolver = static::createMock(ShopResolver::class);
+        $shopResolver->method('resolveShop')->willReturn(static::createMock(ShopInterface::class));
         $resolver = new ContextArgumentResolver(
-            $this->createMock(ContextResolver::class),
+            static::createMock(ContextResolver::class),
             $shopResolver,
             $this->getPsrHttpFactory()
         );
@@ -104,43 +109,131 @@ class ContextArgumentResolverTest extends TestCase
         static::assertInstanceOf(ShopInterface::class, $result);
     }
 
+    public function testRequestIsConverted(): void
+    {
+        $nonPsrRequest = new Request(['foo' => 'bar']);
+
+        $request = new Request(attributes: [AppRequest::PSR_REQUEST_ATTRIBUTE => $nonPsrRequest]);
+        $request->headers->set('HOST', 'localhost');
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            $this->getPsrHttpFactory()
+        );
+
+        $result = \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', RequestInterface::class, false, false, null)));
+
+        static::assertIsArray($result);
+        static::assertCount(1, $result);
+
+        $result = $result[0];
+
+        static::assertInstanceOf(ServerRequest::class, $result);
+        static::assertSame($result->getAttribute(AppRequest::PSR_REQUEST_ATTRIBUTE), $nonPsrRequest);
+    }
+
+    public function testRequestConversionWithWrongData(): void
+    {
+        $request = new Request(attributes: [AppRequest::PSR_REQUEST_ATTRIBUTE => false]);
+        $request->headers->set('HOST', 'localhost');
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            $this->getPsrHttpFactory()
+        );
+
+        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', RequestInterface::class, false, false, null)));
+
+        static::assertInstanceOf(Request::class, $request);
+        static::assertInstanceOf(ServerRequest::class, $request->attributes->get(AppRequest::PSR_REQUEST_ATTRIBUTE));
+    }
+
+    public function testNoConversionAppliedWithPsrRequest(): void
+    {
+        $psrRequest = new ServerRequest('GET', 'http://localhost');
+
+        $request = new Request(attributes: [AppRequest::PSR_REQUEST_ATTRIBUTE => $psrRequest]);
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            $this->getPsrHttpFactory()
+        );
+
+        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', RequestInterface::class, false, false, null)));
+
+        static::assertInstanceOf(Request::class, $request);
+        static::assertSame($request->attributes->get(AppRequest::PSR_REQUEST_ATTRIBUTE), $psrRequest);
+    }
+
+    public function testShopResolved(): void
+    {
+        $repository = new MockShopRepository();
+        $shopResolver = new ShopResolver($repository, static::createMock(RequestVerifier::class));
+
+        $shop = new MockShop('123', 'http://example.com', 'secret');
+
+        $repository->createShop($shop);
+
+        $psrRequest = new \Nyholm\Psr7\Request(
+            'POST',
+            'http://localhost',
+            ['Content-Type' => 'application/json'],
+            \json_encode(['source' => ['shopId' => '123']])
+        );
+
+        $request = new Request(attributes: [AppRequest::PSR_REQUEST_ATTRIBUTE => $psrRequest]);
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            $shopResolver,
+            static::createMock(HttpMessageFactoryInterface::class)
+        );
+
+        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', ShopInterface::class, false, false, null)));
+
+        static::assertSame($shop, $request->attributes->get(AppRequest::SHOP_ATTRIBUTE));
+    }
+
+    public function testExistingShopIsNotResolved(): void
+    {
+        $shopResolver = static::createMock(ShopResolver::class);
+        $shopResolver
+            ->expects(static::never())
+            ->method('resolveShop');
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            $shopResolver,
+            static::createMock(HttpMessageFactoryInterface::class)
+        );
+
+        $shop = new MockShop('123', 'http://example.com', 'secret');
+        $request = new Request(attributes: [AppRequest::SHOP_ATTRIBUTE => $shop]);
+
+        $result = \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', ShopInterface::class, false, false, null)));
+
+        static::assertIsArray($result);
+        static::assertCount(1, $result);
+
+        $result = $result[0];
+
+        static::assertSame($shop, $result);
+    }
+
     public static function provideActions(): \Generator
     {
-        yield [
-            WebhookAction::class
-        ];
-
-        yield [
-            ModuleAction::class
-        ];
-
-        yield [
-            ActionButtonAction::class
-        ];
-
-        yield [
-            TaxProviderAction::class
-        ];
-
-        yield [
-            PaymentPayAction::class
-        ];
-
-        yield [
-            PaymentFinalizeAction::class
-        ];
-
-        yield [
-            PaymentValidateAction::class
-        ];
-
-        yield [
-            PaymentCaptureAction::class
-        ];
-
-        yield [
-            RefundAction::class
-        ];
+        yield [WebhookAction::class];
+        yield [ModuleAction::class];
+        yield [ActionButtonAction::class];
+        yield [TaxProviderAction::class];
+        yield [PaymentPayAction::class];
+        yield [PaymentFinalizeAction::class];
+        yield [PaymentValidateAction::class];
+        yield [PaymentCaptureAction::class];
+        yield [RefundAction::class];
     }
 
     #[DataProvider('provideActions')]
@@ -148,10 +241,10 @@ class ContextArgumentResolverTest extends TestCase
     {
         $request = $this->getRequest();
 
-        $shopResolver = $this->createMock(ShopResolver::class);
-        $shopResolver->method('resolveShop')->willReturn($this->createMock(ShopInterface::class));
+        $shopResolver = static::createMock(ShopResolver::class);
+        $shopResolver->method('resolveShop')->willReturn(static::createMock(ShopInterface::class));
         $resolver = new ContextArgumentResolver(
-            $this->createMock(ContextResolver::class),
+            static::createMock(ContextResolver::class),
             $shopResolver,
             $this->getPsrHttpFactory()
         );
@@ -159,6 +252,55 @@ class ContextArgumentResolverTest extends TestCase
         $result = iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', $action, false, false, null)))[0];
 
         static::assertInstanceOf($action, $result);
+    }
+
+    public static function provideSigningActions(): \Generator
+    {
+        yield [ActionButtonAction::class, true];
+        yield [TaxProviderAction::class, true];
+        yield [PaymentPayAction::class, true];
+        yield [PaymentFinalizeAction::class, true];
+        yield [PaymentValidateAction::class, true];
+        yield [PaymentCaptureAction::class, true];
+        yield [RefundAction::class, true];
+        yield [WebhookAction::class, false];
+        yield [ModuleAction::class, false];
+    }
+
+    #[DataProvider('provideSigningActions')]
+    public function testSigningActions(string $action, bool $requiresSigning): void
+    {
+        $request = $this->getRequest();
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            $this->getPsrHttpFactory()
+        );
+
+        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', $action, false, false, null)));
+
+        if ($requiresSigning) {
+            static::assertTrue($request->attributes->get(AppRequest::SIGN_RESPONSE));
+        } else {
+            static::assertFalse($request->attributes->has(AppRequest::SIGN_RESPONSE));
+        }
+    }
+
+    public function testNoMatchingTypeThrows(): void
+    {
+        $request = $this->getRequest();
+
+        $resolver = new ContextArgumentResolver(
+            static::createMock(ContextResolver::class),
+            static::createMock(ShopResolver::class),
+            $this->getPsrHttpFactory()
+        );
+
+        static::expectException(\RuntimeException::class);
+        static::expectExceptionMessage('Unsupported type stdClass');
+
+        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', \stdClass::class, false, false, null)));
     }
 
     public function getRequest(): Request

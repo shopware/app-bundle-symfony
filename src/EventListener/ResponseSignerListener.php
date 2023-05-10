@@ -28,7 +28,7 @@ final class ResponseSignerListener
 
         $content = $response->getContent();
 
-        if ($content === '' || $content === false) {
+        if (!$content) {
             return;
         }
 

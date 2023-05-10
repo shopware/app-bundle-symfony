@@ -21,7 +21,7 @@ class ResponseSignerListenerTest extends TestCase
         $request = new Request();
 
         $listener = new ResponseSignerListener();
-        $listener(new ResponseEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
+        $listener(new ResponseEvent(static::createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
 
         static::assertFalse($response->headers->has('shopware-app-signature'));
     }
@@ -34,7 +34,7 @@ class ResponseSignerListenerTest extends TestCase
         $request->attributes->set(AppRequest::SHOP_ATTRIBUTE, new MockShop('1', '2', '3'));
 
         $listener = new ResponseSignerListener();
-        $listener(new ResponseEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
+        $listener(new ResponseEvent(static::createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
 
         static::assertFalse($response->headers->has('shopware-app-signature'));
     }
@@ -48,7 +48,7 @@ class ResponseSignerListenerTest extends TestCase
         $request->attributes->set(AppRequest::SHOP_ATTRIBUTE, new MockShop('1', '2', '3'));
 
         $listener = new ResponseSignerListener();
-        $listener(new ResponseEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
+        $listener(new ResponseEvent(static::createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response));
 
         static::assertTrue($response->headers->has('shopware-app-signature'));
         static::assertSame('c29f355ed3adf346156cd184d827b62285dfcfa6713f9ad957b44c131ed31613', $response->headers->get('shopware-app-signature'));

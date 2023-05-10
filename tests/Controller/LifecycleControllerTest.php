@@ -15,7 +15,7 @@ class LifecycleControllerTest extends TestCase
     {
         $request = new Request('GET', '/lifecycle');
 
-        $lifecycle = $this->createMock(AppLifecycle::class);
+        $lifecycle = static::createMock(AppLifecycle::class);
         $lifecycle
             ->expects(static::once())
             ->method('register')
@@ -28,7 +28,7 @@ class LifecycleControllerTest extends TestCase
     {
         $request = new Request('GET', '/lifecycle');
 
-        $lifecycle = $this->createMock(AppLifecycle::class);
+        $lifecycle = static::createMock(AppLifecycle::class);
         $lifecycle
             ->expects(static::once())
             ->method('registerConfirm')
@@ -41,7 +41,7 @@ class LifecycleControllerTest extends TestCase
     {
         $request = new Request('GET', '/lifecycle');
 
-        $lifecycle = $this->createMock(AppLifecycle::class);
+        $lifecycle = static::createMock(AppLifecycle::class);
         $lifecycle
             ->expects(static::once())
             ->method('activate')
@@ -54,7 +54,7 @@ class LifecycleControllerTest extends TestCase
     {
         $request = new Request('GET', '/lifecycle');
 
-        $lifecycle = $this->createMock(AppLifecycle::class);
+        $lifecycle = static::createMock(AppLifecycle::class);
         $lifecycle
             ->expects(static::once())
             ->method('deactivate')
@@ -67,7 +67,7 @@ class LifecycleControllerTest extends TestCase
     {
         $request = new Request('GET', '/lifecycle');
 
-        $lifecycle = $this->createMock(AppLifecycle::class);
+        $lifecycle = static::createMock(AppLifecycle::class);
         $lifecycle
             ->expects(static::once())
             ->method('delete')

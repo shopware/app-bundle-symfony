@@ -6,6 +6,8 @@ namespace Shopware\AppBundle\Test\DependencyInjection;
 
 use Shopware\AppBundle\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
+use Shopware\AppBundle\Entity\AbstractShop;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 class ConfigurationTest extends TestCase
@@ -16,6 +18,31 @@ class ConfigurationTest extends TestCase
 
         $treeBuilder = $configuration->getConfigTreeBuilder();
 
-        $this->assertInstanceOf(TreeBuilder::class, $treeBuilder);
+        static::assertInstanceOf(TreeBuilder::class, $treeBuilder);
+        static::assertEquals(self::getComparableTreeBuilder(), $treeBuilder);
+    }
+
+    public static function getComparableTreeBuilder(): TreeBuilder
+    {
+        $treeBuilder = new TreeBuilder('shopware_app');
+
+        /** @var ArrayNodeDefinition $rootNode */
+        $rootNode = $treeBuilder->getRootNode();
+
+        $rootNode->children()
+            ->scalarNode('shop_class')
+            ->defaultValue(AbstractShop::class)
+            ->end()
+            ->scalarNode('confirmation_url')
+            ->defaultValue('shopware_app_lifecycle_confirm')
+            ->end()
+            ->scalarNode('name')
+            ->defaultValue('TestApp')
+            ->end()
+            ->scalarNode('secret')
+            ->defaultValue('TestSecret')
+            ->end();
+
+        return $treeBuilder;
     }
 }

@@ -12,7 +12,7 @@ class AppConfigurationFactoryTest extends TestCase
 {
     public function testCreateAppFactory()
     {
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator = static::createMock(UrlGeneratorInterface::class);
 
         $urlGenerator->method('generate')->with(
             $this->anything(),
@@ -29,8 +29,8 @@ class AppConfigurationFactoryTest extends TestCase
 
         $config = $factory->newConfiguration();
 
-        $this->assertEquals('name', $config->getAppName());
-        $this->assertEquals('secret', $config->getAppSecret());
-        $this->assertEquals('https://test.com/confirm', $config->getRegistrationConfirmUrl());
+        static::assertEquals('name', $config->getAppName());
+        static::assertEquals('secret', $config->getAppSecret());
+        static::assertEquals('https://test.com/confirm', $config->getRegistrationConfirmUrl());
     }
 }
