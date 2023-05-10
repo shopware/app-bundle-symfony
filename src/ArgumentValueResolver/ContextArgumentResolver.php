@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class ContextArgumentResolver implements ValueResolverInterface
+final class ContextArgumentResolver implements ValueResolverInterface
 {
     private const SUPPORTED_TYPES = [
         RequestInterface::class => true,

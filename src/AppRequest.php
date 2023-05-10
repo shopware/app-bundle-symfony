@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle;
 
-class AppRequest
+final class AppRequest
 {
     final public const SHOP_ATTRIBUTE = '_shopware_app_shop';
     final public const PSR_REQUEST_ATTRIBUTE = '_shopware_app_psr_request';

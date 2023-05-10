@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[AsController]
-class WebhookController
+final class WebhookController
 {
     public function __construct(private readonly EventDispatcherInterface $eventDispatcher)
     {

@@ -10,7 +10,7 @@ use Shopware\App\SDK\AppLifecycle;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
 #[AsController]
-class LifecycleController
+final class LifecycleController
 {
     public function __construct(
         private readonly AppLifecycle $appLifecycle

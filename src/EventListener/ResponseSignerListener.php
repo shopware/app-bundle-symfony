@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
  * This listener runs after the PSR converter of Symfony, so we can sign the response
  */
 #[AsEventListener]
-class ResponseSignerListener
+final class ResponseSignerListener
 {
     public function __invoke(ResponseEvent $event): void
     {

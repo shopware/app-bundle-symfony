@@ -6,6 +6,6 @@ namespace Shopware\AppBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ShopwareAppBundle extends Bundle
+final class ShopwareAppBundle extends Bundle
 {
 }

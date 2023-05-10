@@ -7,7 +7,7 @@ namespace Shopware\AppBundle\DependencyInjection;
 use Shopware\App\SDK\AppConfiguration;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class AppConfigurationFactory
+final class AppConfigurationFactory
 {
     public function __construct(
         private readonly string $appName,
