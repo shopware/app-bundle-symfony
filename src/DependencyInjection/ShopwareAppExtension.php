@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\DependencyInjection;
 
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
-use Shopware\AppBundle\Registration\AppConfigurationFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;

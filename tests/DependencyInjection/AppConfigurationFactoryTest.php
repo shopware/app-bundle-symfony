@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopware\AppBundle\Test\Registration;
+namespace Shopware\AppBundle\Test\DependencyInjection;
 
-use Shopware\AppBundle\Registration\AppConfigurationFactory;
 use PHPUnit\Framework\TestCase;
+use Shopware\AppBundle\DependencyInjection\AppConfigurationFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AppConfigurationFactoryTest extends TestCase

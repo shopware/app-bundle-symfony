@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopware\AppBundle\Registration;
+namespace Shopware\AppBundle\DependencyInjection;
 
 use Shopware\App\SDK\AppConfiguration;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

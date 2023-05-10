@@ -5,7 +5,7 @@
     <services>
         <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="Shopware\AppBundle\Registration\AppConfigurationFactory">
+        <service id="Shopware\AppBundle\DependencyInjection\AppConfigurationFactory">
             <!-- Will be filled by \Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::load -->
             <argument/>
             <argument/>
@@ -14,7 +14,7 @@
         </service>
 
         <service id="Shopware\App\SDK\AppConfiguration">
-            <factory service="Shopware\AppBundle\Registration\AppConfigurationFactory" method="newConfiguration"/>
+            <factory service="Shopware\AppBundle\DependencyInjection\AppConfigurationFactory" method="newConfiguration"/>
         </service>
 
         <service id="Shopware\App\SDK\AppLifecycle">
