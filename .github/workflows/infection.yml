@@ -29,3 +29,5 @@ jobs:
 
       - name: Infection PHP
         run: vendor/bin/infection --min-msi=90 --min-covered-msi=95 --threads=4
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
