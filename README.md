@@ -72,6 +72,8 @@ By default, the following routes are registered:
 
 You can change the prefix by editing the `config/routes/shopware_app.yaml` file.
 
+The registration also dispatches events to react to the different lifecycle events. See APP SDK docs for it
+
 ### 4. Connecting Doctrine to a Database
 
 The App Bundle brings by default a basic Shop entity to store the shop information.
@@ -89,4 +91,25 @@ and apply it with the command: `bin/console doctrine:migrations:migrate`.
 
 [Checkout the Official app documentation to learn more about the different integration points with this SDK](https://developer.shopware.com/docs/guides/plugins/apps).
 
-You can also check out the [APP SDK](https://github.com/shopware/app-php-sdk).
+You can also check out the [APP SDK](https://github.com/shopware/app-php-sdk) documentation.
+
+### Optional: Webhook as Symfony Events
+
+The app bundle registers also a generic webhook controller which dispatches the webhook as Symfony event. 
+To use that, register your Shopware webhooks to the generic webhook which is by default `/app/webhook`
+```xml
+<webhook name="productWritten" url="http://localhost:8000/app/webhook" event="product.written"/>
+```
+
+With that, you can write a Symfony EventListener/Subscriber to listen to the event and react to it.
+
+```php
+#[AsEventListener(event: 'webhook.product.written')]
+class ProductUpdatedListener
+{
+    public function __invoke(WebhookAction $action): void
+    {
+        // handle the webhook
+    }
+}
+```

@@ -56,6 +56,11 @@
             <tag name="controller.service_arguments"/>
         </service>
 
+        <service id="Shopware\AppBundle\Controller\WebhookController" public="true">
+            <argument type="service" id="event_dispatcher"/>
+            <tag name="controller.service_arguments"/>
+        </service>
+
         <service id="Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver"/>
         <service id="Shopware\AppBundle\EventListener\ResponseSignerListener"/>
 
