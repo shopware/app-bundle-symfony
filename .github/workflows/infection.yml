@@ -1,0 +1,31 @@
+name: InfectionPHP
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.php'
+      - 'composer.json'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:v2
+          coverage: xdebug
+          ini-values: assert.active=On assert.exception=On zend.assertions=-1
+
+      - name: Install highest dependencies with composer
+        run: composer update --no-ansi --no-interaction --no-progress
+
+      - name: Infection PHP
+        run: vendor/bin/infection --min-msi=90 --min-covered-msi=95 --threads=4

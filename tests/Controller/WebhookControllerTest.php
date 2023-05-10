@@ -16,14 +16,14 @@ class WebhookControllerTest extends TestCase
 {
     public function testDispatchesWebhookAction(): void
     {
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $dispatcher = static::createMock(EventDispatcherInterface::class);
         $controller = new WebhookController(
             $dispatcher
         );
 
         $webhook = new WebhookAction(
-            $this->createMock(ShopInterface::class),
-            $this->createMock(ActionSource::class),
+            static::createMock(ShopInterface::class),
+            static::createMock(ActionSource::class),
             'product.written',
             [],
             new \DateTimeImmutable()
