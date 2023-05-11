@@ -12,6 +12,8 @@
             <argument/>
             <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
         </service>
+               
+        <service id="Shopware\App\SDK\HttpClient\ClientFactory"/>
 
         <service id="Shopware\App\SDK\AppConfiguration">
             <factory service="Shopware\AppBundle\DependencyInjection\AppConfigurationFactory" method="newConfiguration"/>
