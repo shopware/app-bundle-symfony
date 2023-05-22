@@ -7,20 +7,16 @@ namespace Shopware\AppBundle\Test\DependencyInjection;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\RequestInterface;
 use Shopware\App\SDK\Authentication\RequestVerifier;
-use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\App\SDK\Shop\ShopResolver;
 use Shopware\App\SDK\Test\MockShop;
 use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\AppRequest;
-use Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver;
 use Shopware\AppBundle\DependencyInjection\ShopProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 class ShopProviderTest extends TestCase
 {
