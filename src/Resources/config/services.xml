@@ -12,7 +12,7 @@
             <argument/>
             <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface"/>
         </service>
-               
+
         <service id="Shopware\App\SDK\HttpClient\ClientFactory"/>
 
         <service id="Shopware\App\SDK\AppConfiguration">
@@ -65,6 +65,11 @@
 
         <service id="Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver"/>
         <service id="Shopware\AppBundle\EventListener\ResponseSignerListener"/>
+
+        <service id="Shopware\AppBundle\DependencyInjection\ShopProvider" />
+        <service id="Shopware\App\SDK\Shop\ShopInterface">
+            <factory service="Shopware\AppBundle\DependencyInjection\ShopProvider" method="provide" />
+        </service>
 
         <!-- PSR Integration -->
         <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
