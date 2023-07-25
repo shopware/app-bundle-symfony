@@ -13,6 +13,7 @@ use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
 use Shopware\App\SDK\Context\Payment\PaymentPayAction;
 use Shopware\App\SDK\Context\Payment\PaymentValidateAction;
 use Shopware\App\SDK\Context\Payment\RefundAction;
+use Shopware\App\SDK\Context\Storefront\StorefrontAction;
 use Shopware\App\SDK\Context\TaxProvider\TaxProviderAction;
 use Shopware\App\SDK\Context\Webhook\WebhookAction;
 use Shopware\App\SDK\Shop\ShopInterface;
@@ -37,6 +38,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
         RefundAction::class => true,
+        StorefrontAction::class => true,
     ];
 
     private const SIGNING_REQUIRED_TYPES = [
@@ -110,6 +112,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             PaymentValidateAction::class => yield $this->contextResolver->assemblePaymentValidate($psrRequest, $shop),
             PaymentCaptureAction::class => yield $this->contextResolver->assemblePaymentCapture($psrRequest, $shop),
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
+            StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
         };
     }
