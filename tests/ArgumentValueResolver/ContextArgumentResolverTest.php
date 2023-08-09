@@ -289,7 +289,7 @@ class ContextArgumentResolverTest extends TestCase
         }
     }
 
-    public function testNoMatchingTypeThrows(): void
+    public function testIgnoresUnknownArgumentTypes(): void
     {
         $request = $this->getRequest();
 
@@ -299,10 +299,7 @@ class ContextArgumentResolverTest extends TestCase
             $this->getPsrHttpFactory()
         );
 
-        static::expectException(\RuntimeException::class);
-        static::expectExceptionMessage('Unsupported type stdClass');
-
-        \iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', \stdClass::class, false, false, null)));
+        static::assertEmpty(\iterator_to_array($resolver->resolve($request, new ArgumentMetadata('test', \stdClass::class, false, false, null))));
     }
 
     public function getRequest(): Request

@@ -68,9 +68,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        /** @var class-string|null $type */
-        $type = $argument->getType();
-        if ($type === null) {
+        if(!$this->supports($request, $argument)) {
             return;
         }
 
@@ -80,6 +78,9 @@ final class ContextArgumentResolver implements ValueResolverInterface
             $psrRequest = $this->httpFoundationFactory->createRequest($request);
             $request->attributes->set(AppRequest::PSR_REQUEST_ATTRIBUTE, $psrRequest);
         }
+
+        /** @var class-string $type */
+        $type = $argument->getType();
 
         if ($type === RequestInterface::class) {
             yield $psrRequest;
