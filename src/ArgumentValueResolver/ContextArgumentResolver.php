@@ -8,6 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Module\ModuleAction;
+use Shopware\App\SDK\Context\Payment\RiskAssessmentAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
 use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
 use Shopware\App\SDK\Context\Payment\PaymentPayAction;
@@ -37,6 +38,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentFinalizeAction::class => true,
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
+        RiskAssessmentAction::class => true,
         RefundAction::class => true,
         StorefrontAction::class => true,
     ];
@@ -48,6 +50,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentFinalizeAction::class => true,
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
+        RiskAssessmentAction::class => true,
         RefundAction::class => true,
     ];
 
@@ -112,6 +115,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             PaymentFinalizeAction::class => yield $this->contextResolver->assemblePaymentFinalize($psrRequest, $shop),
             PaymentValidateAction::class => yield $this->contextResolver->assemblePaymentValidate($psrRequest, $shop),
             PaymentCaptureAction::class => yield $this->contextResolver->assemblePaymentCapture($psrRequest, $shop),
+            RiskAssessmentAction::class => yield $this->contextResolver->assembleRiskAssessment($psrRequest, $shop),
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),

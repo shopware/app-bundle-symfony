@@ -18,6 +18,7 @@ use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
 use Shopware\App\SDK\Context\Payment\PaymentPayAction;
 use Shopware\App\SDK\Context\Payment\PaymentValidateAction;
 use Shopware\App\SDK\Context\Payment\RefundAction;
+use Shopware\App\SDK\Context\Payment\RiskAssessmentAction;
 use Shopware\App\SDK\Context\Storefront\StorefrontAction;
 use Shopware\App\SDK\Context\TaxProvider\TaxProviderAction;
 use Shopware\App\SDK\Context\Webhook\WebhookAction;
@@ -236,6 +237,7 @@ class ContextArgumentResolverTest extends TestCase
         yield [PaymentCaptureAction::class];
         yield [RefundAction::class];
         yield [StorefrontAction::class];
+        yield [RiskAssessmentAction::class];
     }
 
     #[DataProvider('provideActions')]
@@ -267,6 +269,7 @@ class ContextArgumentResolverTest extends TestCase
         yield [RefundAction::class, true];
         yield [WebhookAction::class, false];
         yield [ModuleAction::class, false];
+        yield [RiskAssessmentAction::class, true];
     }
 
     #[DataProvider('provideSigningActions')]
