@@ -11,19 +11,19 @@ use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 
 /**
- * @implements ShopRepositoryInterface<AbstractShop>
+ * @implements ShopRepositoryInterface<ShopInterface>
  */
 class ShopRepositoryBridge implements ShopRepositoryInterface
 {
     /**
-     * @param class-string<AbstractShop> $entityClass
+     * @param class-string<ShopInterface> $entityClass
      */
     public function __construct(
         private readonly string $entityClass,
         private readonly ManagerRegistry $registry
     ) {
-        if (!is_subclass_of($this->entityClass, AbstractShop::class)) {
-            throw new \InvalidArgumentException(sprintf('The shop entity class "%s" must extend "%s"', $this->entityClass, AbstractShop::class));
+        if (!is_subclass_of($this->entityClass, ShopInterface::class)) {
+            throw new \InvalidArgumentException(sprintf('The shop entity class "%s" must implement "%s"', $this->entityClass, ShopInterface::class));
         }
         if ($this->registry->getManagerForClass($this->entityClass) === null) {
             throw new \InvalidArgumentException(sprintf('The shop entity class "%s" must be a doctrine managed entity', $this->entityClass));
@@ -65,9 +65,8 @@ class ShopRepositoryBridge implements ShopRepositoryInterface
 
     private function getManager(): ObjectManager
     {
+        /** @var ObjectManager $manager */
         $manager = $this->registry->getManagerForClass($this->entityClass);
-        // we check that $shopEntity is a doctrine entity in the constructor
-        assert($manager !== null);
         return $manager;
     }
 }
