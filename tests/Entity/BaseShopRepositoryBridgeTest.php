@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class BaseShopRepositoryBridgeTest extends TestCase
 {
-    public function testConstructionFailsWithIncorrectShopEntity()
+    public function testConstructionFailsWithIncorrectShopEntity(): void
     {
         static::expectException(\InvalidArgumentException::class);
 
@@ -34,7 +34,7 @@ class BaseShopRepositoryBridgeTest extends TestCase
     }
 
 
-    public function testConstructionFailsForNonDoctrineEntities()
+    public function testConstructionFailsForNonDoctrineEntities(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -51,7 +51,7 @@ class BaseShopRepositoryBridgeTest extends TestCase
         );
     }
 
-    public function testBridgeCanConstructCustomShopEntity()
+    public function testBridgeCanConstructCustomShopEntity(): void
     {
         $customShop = new class ('', '', '') extends AbstractShop {
             public function __construct(string $shopId, string $shopUrl, string $shopSecret)

@@ -12,5 +12,10 @@
     },
     "mutators": {
         "@default": true,
+        "MatchArmRemoval": {
+            "ignoreSourceCodeByRegex": [
+                "default => throw new \\\\RuntimeException\\(sprintf\\('Unsupported type %s', \\$type\\)\\).*"
+            ]
+        }
     }
 }
