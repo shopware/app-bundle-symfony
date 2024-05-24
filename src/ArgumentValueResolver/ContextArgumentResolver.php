@@ -7,6 +7,7 @@ namespace Shopware\AppBundle\ArgumentValueResolver;
 use Psr\Http\Message\RequestInterface;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
+use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
 use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
 use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
@@ -39,6 +40,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentCaptureAction::class => true,
         RefundAction::class => true,
         StorefrontAction::class => true,
+        CheckoutGatewayAction::class => true,
     ];
 
     private const SIGNING_REQUIRED_TYPES = [
@@ -49,6 +51,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
         RefundAction::class => true,
+        CheckoutGatewayAction::class => true,
     ];
 
     public function __construct(
@@ -114,6 +117,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             PaymentCaptureAction::class => yield $this->contextResolver->assemblePaymentCapture($psrRequest, $shop),
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
+            CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
             default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
         };
     }

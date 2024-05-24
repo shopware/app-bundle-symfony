@@ -24,7 +24,7 @@
         "symfony/psr-http-message-bridge": "2.* || ^7.0",
         "symfony/routing": "^6.2 || ^6.3 || ^6.4 || ^7.0",
         "doctrine/orm": "^2.11",
-        "shopware/app-php-sdk": "^2.0",
+        "shopware/app-php-sdk": "^3.0",
         "symfony/doctrine-bridge": "^6.2 || ^6.3 || ^6.4 || ^7.0",
         "symfony/http-client": "^6.2 || ^6.3 || ^6.4 || ^7.0",
         "nyholm/psr7": "^1.8"
