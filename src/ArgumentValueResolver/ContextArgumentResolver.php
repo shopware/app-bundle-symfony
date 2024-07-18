@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\ArgumentValueResolver;
 
+use JsonException;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
+use Shopware\App\SDK\Context\Gateway\InAppFeatures\FilterAction;
 use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
 use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
@@ -41,6 +44,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         RefundAction::class => true,
         StorefrontAction::class => true,
         CheckoutGatewayAction::class => true,
+        FilterAction::class => true,
     ];
 
     private const SIGNING_REQUIRED_TYPES = [
@@ -68,6 +72,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
 
     /**
      * @return iterable<object>
+     * @throws JsonException|RuntimeException
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
@@ -118,7 +123,8 @@ final class ContextArgumentResolver implements ValueResolverInterface
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
-            default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
+            FilterAction::class => yield $this->contextResolver->assembleInAppFeatureFilterRequest($psrRequest, $shop),
+            default => throw new RuntimeException(sprintf('Unsupported type %s', $type)),
         };
     }
 }
