@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\ArgumentValueResolver;
 
-use JsonException;
 use Psr\Http\Message\RequestInterface;
-use RuntimeException;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
@@ -72,7 +70,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
 
     /**
      * @return iterable<object>
-     * @throws JsonException|RuntimeException
+     * @throws \JsonException|\RuntimeException
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
@@ -124,7 +122,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
             FilterAction::class => yield $this->contextResolver->assembleInAppFeatureFilterRequest($psrRequest, $shop),
-            default => throw new RuntimeException(sprintf('Unsupported type %s', $type)),
+            default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
         };
     }
 }
