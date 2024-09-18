@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\DependencyInjection;
 
+use AsyncAws\DynamoDb\DynamoDbClient;
+use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
+use Shopware\AppBundle\Entity\AbstractShop;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class ShopwareAppExtension extends Extension
 {
@@ -23,8 +28,15 @@ final class ShopwareAppExtension extends Extension
 
         $loader->load('services.xml');
 
-        $container->getDefinition(ShopRepositoryInterface::class)
-            ->replaceArgument(0, $config['shop_class']);
+        if ($config['storage'] === 'dynamodb') {
+            $service = new Definition(DynamoDBRepository::class);
+            $service->setArgument(0, new Reference(DynamoDbClient::class));
+            $service->setArgument(1, $config['dynamodb']['table_name'] ?? 'shops');
+            $container->setDefinition(ShopRepositoryInterface::class, $service);
+        } else {
+            $container->getDefinition(ShopRepositoryInterface::class)
+                ->replaceArgument(0, $config['doctrine']['shop_class'] ?? AbstractShop::class);
+        }
 
         $container->getDefinition(AppConfigurationFactory::class)
             ->replaceArgument(0, $config['name'])
