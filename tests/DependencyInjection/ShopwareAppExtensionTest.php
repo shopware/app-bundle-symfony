@@ -4,21 +4,35 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\Test\DependencyInjection;
 
+use AsyncAws\DynamoDb\DynamoDbClient;
 use PHPUnit\Framework\TestCase;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBShop;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
+use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\DependencyInjection\AppConfigurationFactory;
 use Shopware\AppBundle\DependencyInjection\ShopwareAppExtension;
 use Shopware\AppBundle\Entity\AbstractShop;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ShopwareAppExtensionTest extends TestCase
 {
-    public function testLoadConfig(): void
+    public function testDefaultConfig(): void
     {
         $extension = new ShopwareAppExtension();
         $container = new ContainerBuilder();
         $extension->load([], $container);
+
+        static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
+
+        static::assertSame(MockShopRepository::class, $container->getDefinition(ShopRepositoryInterface::class)->getClass());
+    }
+
+    public function testLoadConfig(): void
+    {
+        $extension = new ShopwareAppExtension();
+        $container = new ContainerBuilder();
+        $extension->load(['my_bundle' => ['storage' => 'doctrine']], $container);
 
         static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
         static::assertTrue($container->hasDefinition(AppConfigurationFactory::class));
@@ -43,7 +57,7 @@ class ShopwareAppExtensionTest extends TestCase
     {
         $extension = new ShopwareAppExtension();
         $container = new ContainerBuilder();
-        $extension->load(['my_bundle' => ['doctrine' => ['shop_class' => DynamoDBShop::class]]], $container);
+        $extension->load(['my_bundle' => ['storage' => 'doctrine', 'doctrine' => ['shop_class' => DynamoDBShop::class]]], $container);
 
         static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
         static::assertTrue($container->hasDefinition(AppConfigurationFactory::class));
@@ -90,6 +104,11 @@ class ShopwareAppExtensionTest extends TestCase
         static::assertTrue($container->hasDefinition(AppConfigurationFactory::class));
 
         static::assertCount(2, $container->getDefinition(ShopRepositoryInterface::class)->getArguments());
+
+        $client = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(0);
+        static::assertInstanceOf(Reference::class, $client);
+
+        static::assertSame(DynamoDbClient::class, $client->__toString());
 
         $shopClass = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(1);
 
