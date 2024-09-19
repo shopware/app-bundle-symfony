@@ -18,10 +18,23 @@ final class Configuration implements ConfigurationInterface
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
+        // @phpstan-ignore-next-line
         $rootNode->children()
-            ->scalarNode('shop_class')
-                ->defaultValue(AbstractShop::class)
+            ->scalarNode('storage')->defaultValue('doctrine')->end()
+            ->arrayNode('doctrine')
+                ->children()
+                    ->scalarNode('shop_class')
+                        ->defaultValue(AbstractShop::class)
+                    ->end()
                 ->end()
+            ->end()
+            ->arrayNode('dynamodb')
+                ->children()
+                    ->scalarNode('table_name')
+                        ->defaultValue('shops')
+                    ->end()
+                ->end()
+            ->end()
             ->scalarNode('confirmation_url')
                 ->defaultValue('shopware_app_lifecycle_confirm')
                 ->end()
