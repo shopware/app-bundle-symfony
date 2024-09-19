@@ -7,6 +7,7 @@ namespace Shopware\AppBundle\DependencyInjection;
 use AsyncAws\DynamoDb\DynamoDbClient;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
+use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\Entity\AbstractShop;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -33,9 +34,11 @@ final class ShopwareAppExtension extends Extension
             $service->setArgument(0, new Reference(DynamoDbClient::class));
             $service->setArgument(1, $config['dynamodb']['table_name'] ?? 'shops');
             $container->setDefinition(ShopRepositoryInterface::class, $service);
-        } else {
+        } elseif ($config['storage'] === 'doctrine') {
             $container->getDefinition(ShopRepositoryInterface::class)
                 ->replaceArgument(0, $config['doctrine']['shop_class'] ?? AbstractShop::class);
+        } else {
+            $container->setDefinition(ShopRepositoryInterface::class, new Definition(MockShopRepository::class));
         }
 
         $container->getDefinition(AppConfigurationFactory::class)
