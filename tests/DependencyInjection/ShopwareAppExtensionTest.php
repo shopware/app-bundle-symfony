@@ -6,6 +6,7 @@ namespace Shopware\AppBundle\Test\DependencyInjection;
 
 use AsyncAws\DynamoDb\DynamoDbClient;
 use PHPUnit\Framework\TestCase;
+use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBShop;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
@@ -17,11 +18,22 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ShopwareAppExtensionTest extends TestCase
 {
-    public function testDefaultConfig(): void
+    public function testDefaultConfigAuto(): void
     {
         $extension = new ShopwareAppExtension();
         $container = new ContainerBuilder();
         $extension->load([], $container);
+
+        static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
+
+        static::assertSame(DynamoDBRepository::class, $container->getDefinition(ShopRepositoryInterface::class)->getClass());
+    }
+
+    public function testDefaultInMemory(): void
+    {
+        $extension = new ShopwareAppExtension();
+        $container = new ContainerBuilder();
+        $extension->load(['my_bundle' => ['storage' => 'in-memory']], $container);
 
         static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
 

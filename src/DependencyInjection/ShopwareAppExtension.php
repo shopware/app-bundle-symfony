@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\DependencyInjection;
 
 use AsyncAws\DynamoDb\DynamoDbClient;
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
@@ -29,12 +30,23 @@ final class ShopwareAppExtension extends Extension
 
         $loader->load('services.xml');
 
-        if ($config['storage'] === 'dynamodb') {
+        $storage = $config['storage'];
+
+        if ($storage === 'auto') {
+            // @infection-ignore-all
+            $storage = match (true) {
+                ContainerBuilder::willBeAvailable('async-aws/dynamo-db', DynamoDbClient::class, ['async-aws/async-aws-bundle']) => 'dynamodb',
+                ContainerBuilder::willBeAvailable('doctrine/orm', DoctrineBundle::class, ['doctrine/doctrine-bundle']) => 'doctrine',
+                default => 'in-memory',
+            };
+        }
+
+        if ($storage === 'dynamodb') {
             $service = new Definition(DynamoDBRepository::class);
             $service->setArgument(0, new Reference(DynamoDbClient::class));
             $service->setArgument(1, $config['dynamodb']['table_name'] ?? 'shops');
             $container->setDefinition(ShopRepositoryInterface::class, $service);
-        } elseif ($config['storage'] === 'doctrine') {
+        } elseif ($storage === 'doctrine') {
             $container->getDefinition(ShopRepositoryInterface::class)
                 ->replaceArgument(0, $config['doctrine']['shop_class'] ?? AbstractShop::class);
         } else {
