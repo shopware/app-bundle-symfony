@@ -30,7 +30,10 @@ class ConfigurationTest extends TestCase
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()
-            ->scalarNode('storage')->defaultValue('in-memory')->end()
+            ->enumNode('storage')
+                ->values(['in-memory', 'doctrine', 'dynamodb', 'auto'])
+                ->defaultValue('auto')
+            ->end()
             ->arrayNode('doctrine')
             ->children()
             ->scalarNode('shop_class')

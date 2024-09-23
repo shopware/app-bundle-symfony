@@ -20,7 +20,10 @@ final class Configuration implements ConfigurationInterface
 
         // @phpstan-ignore-next-line
         $rootNode->children()
-            ->scalarNode('storage')->defaultValue('in-memory')->end()
+            ->enumNode('storage')
+                ->values(['in-memory', 'doctrine', 'dynamodb', 'auto'])
+                ->defaultValue('auto')
+            ->end()
             ->arrayNode('doctrine')
                 ->children()
                     ->scalarNode('shop_class')
