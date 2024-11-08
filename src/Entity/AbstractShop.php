@@ -44,7 +44,10 @@ abstract class AbstractShop implements ShopInterface
 
     public function getShopUrl(): string
     {
-        return $this->shopUrl;
+        /** @var string $url */
+        $url = preg_replace('#([^:])//+#', '$1/', $this->shopUrl);
+
+        return rtrim($url, '/');
     }
 
     public function getShopSecret(): string
