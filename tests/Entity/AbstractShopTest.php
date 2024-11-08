@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shopware\AppBundle\Test\Entity;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Shopware\AppBundle\Entity\AbstractShop;
 
@@ -57,7 +58,6 @@ class AbstractShopTest extends TestCase
             'shopUrl' => 'https://test.com//test',
             'expectedUrl' => 'https://test.com/test',
         ];
-
 
         yield 'Invalid URL with 2 slashes and trailing slash' => [
             'shopUrl' => 'https://test.com//test/',
