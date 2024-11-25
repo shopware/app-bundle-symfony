@@ -56,6 +56,7 @@ final class ShopwareAppExtension extends Extension
         $container->getDefinition(AppConfigurationFactory::class)
             ->replaceArgument(0, $config['name'])
             ->replaceArgument(1, $config['secret'])
-            ->replaceArgument(2, $config['confirmation_url']);
+            ->replaceArgument(2, $config['confirmation_url'])
+            ->replaceArgument(3, $config['check_if_shop_url_is_reachable']);
     }
 }

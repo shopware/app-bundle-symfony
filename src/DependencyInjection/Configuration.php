@@ -46,6 +46,9 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->scalarNode('secret')
                 ->defaultValue('TestSecret')
+                ->end()
+            ->booleanNode('check_if_shop_url_is_reachable')
+                ->defaultFalse()
                 ->end();
 
         return $treeBuilder;
