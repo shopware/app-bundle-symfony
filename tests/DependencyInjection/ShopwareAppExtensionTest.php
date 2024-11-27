@@ -13,8 +13,10 @@ use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\DependencyInjection\AppConfigurationFactory;
 use Shopware\AppBundle\DependencyInjection\ShopwareAppExtension;
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ShopwareAppExtensionTest extends TestCase
 {
@@ -125,5 +127,33 @@ class ShopwareAppExtensionTest extends TestCase
         $shopClass = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(1);
 
         static::assertSame('foo', $shopClass);
+    }
+
+    public function testContainerMustHaveBeforeRegistrationStartsListener(): void
+    {
+        $extension = new ShopwareAppExtension();
+        $container = new ContainerBuilder();
+        $extension->load([], $container);
+
+        static::assertTrue($container->hasParameter('shopware_app.check_if_shop_url_is_reachable'));
+
+        static::assertTrue($container->hasDefinition(BeforeRegistrationStartsListener::class));
+
+        static::assertSame(
+            'kernel.event_listener',
+            array_key_first($container->getDefinition(BeforeRegistrationStartsListener::class)->getTags())
+        );
+
+        static::assertCount(
+            2,
+            $container->getDefinition(BeforeRegistrationStartsListener::class)->getArguments()
+        );
+
+        static::assertSame(
+            HttpClientInterface::class,
+            $container->getDefinition(BeforeRegistrationStartsListener::class)->getArgument(0)->__toString()
+        );
+
+        static::assertFalse($container->getDefinition(BeforeRegistrationStartsListener::class)->getArgument(1));
     }
 }

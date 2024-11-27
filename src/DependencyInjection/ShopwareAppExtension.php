@@ -10,12 +10,14 @@ use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ShopwareAppExtension extends Extension
 {
@@ -57,5 +59,25 @@ final class ShopwareAppExtension extends Extension
             ->replaceArgument(0, $config['name'])
             ->replaceArgument(1, $config['secret'])
             ->replaceArgument(2, $config['confirmation_url']);
+
+        $this->registerListener($container, $config);
+    }
+
+    /**
+     * @param array<string, bool> $config
+     */
+    private function registerListener(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter(
+            sprintf('%s.check_if_shop_url_is_reachable', Configuration::EXTENSION_ALIAS),
+            $config['check_if_shop_url_is_reachable']
+        );
+
+        $listener = new Definition(BeforeRegistrationStartsListener::class);
+        $listener->setArgument(0, new Reference(HttpClientInterface::class));
+        $listener->setArgument(1, $config['check_if_shop_url_is_reachable']);
+        $listener->addTag('kernel.event_listener');
+
+        $container->setDefinition(BeforeRegistrationStartsListener::class, $listener);
     }
 }
