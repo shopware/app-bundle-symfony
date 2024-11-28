@@ -10,12 +10,18 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsEventListener]
-final class BeforeRegistrationStartsListener
+class BeforeRegistrationStartsListener
 {
+    private HttpClientInterface $httpClient;
+
+    private bool $checkShopURLIsReachable;
+
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
-        private readonly bool $checkShopURLIsReachable
+        HttpClientInterface $httpClient,
+        bool $checkShopURLIsReachable
     ) {
+        $this->httpClient = $httpClient;
+        $this->checkShopURLIsReachable = $checkShopURLIsReachable;
     }
 
     public function __invoke(BeforeRegistrationStartsEvent $event): void
