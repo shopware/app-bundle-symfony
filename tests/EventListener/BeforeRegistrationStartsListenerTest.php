@@ -80,7 +80,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
     public function testListenerMustThrowExceptionBecauseTheShopURLIsNotReachable(): void
     {
         $this->expectException(ShopURLIsNotReachableException::class);
-        $this->expectExceptionMessage('Shop URL "https://shop-url.com" is not reachable from the internet and cannot be registered.');
+        $this->expectExceptionMessage('Shop URL "https://shop-url.com" is not reachable from the application server.');
 
         $shop = $this->createMock(ShopInterface::class);
         $shop

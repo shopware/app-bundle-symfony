@@ -10,7 +10,7 @@ class ShopURLIsNotReachableException extends \RuntimeException
     {
         parent::__construct(
             sprintf(
-                'Shop URL "%s" is not reachable from the internet and cannot be registered.',
+                'Shop URL "%s" is not reachable from the application server.',
                 $shopUrl
             ),
             0,
