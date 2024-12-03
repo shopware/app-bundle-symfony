@@ -57,5 +57,10 @@ final class ShopwareAppExtension extends Extension
             ->replaceArgument(0, $config['name'])
             ->replaceArgument(1, $config['secret'])
             ->replaceArgument(2, $config['confirmation_url']);
+
+        $container->setParameter(
+            sprintf('%s.check_if_shop_url_is_reachable', Configuration::EXTENSION_ALIAS),
+            $config['check_if_shop_url_is_reachable']
+        );
     }
 }

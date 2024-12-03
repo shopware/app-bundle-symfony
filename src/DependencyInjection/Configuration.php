@@ -11,9 +11,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
+    public const EXTENSION_ALIAS = 'shopware_app';
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('shopware_app');
+        $treeBuilder = new TreeBuilder(self::EXTENSION_ALIAS);
 
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
@@ -46,6 +48,9 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->scalarNode('secret')
                 ->defaultValue('TestSecret')
+                ->end()
+            ->booleanNode('check_if_shop_url_is_reachable')
+                ->defaultFalse()
                 ->end();
 
         return $treeBuilder;

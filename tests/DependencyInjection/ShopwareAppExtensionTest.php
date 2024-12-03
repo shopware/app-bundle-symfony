@@ -27,6 +27,8 @@ class ShopwareAppExtensionTest extends TestCase
         static::assertTrue($container->hasDefinition(ShopRepositoryInterface::class));
 
         static::assertSame(DynamoDBRepository::class, $container->getDefinition(ShopRepositoryInterface::class)->getClass());
+
+        static::assertTrue($container->hasParameter('shopware_app.check_if_shop_url_is_reachable'));
     }
 
     public function testDefaultInMemory(): void

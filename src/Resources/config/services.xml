@@ -65,6 +65,10 @@
 
         <service id="Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver"/>
         <service id="Shopware\AppBundle\EventListener\ResponseSignerListener"/>
+        <service id="Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener">
+            <argument type="service" id="Symfony\Contracts\HttpClient\HttpClientInterface"/>
+            <argument>%shopware_app.check_if_shop_url_is_reachable%</argument>
+        </service>
 
         <!-- PSR Integration -->
         <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
