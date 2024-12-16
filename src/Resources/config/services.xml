@@ -29,7 +29,21 @@
 
         <service id="Shopware\App\SDK\Authentication\RequestVerifier"/>
         <service id="Shopware\App\SDK\Authentication\ResponseSigner"/>
-        <service id="Shopware\App\SDK\Context\ContextResolver"/>
+
+        <service id="Shopware\App\SDK\Context\InAppPurchase\SBPStoreKeyFetcher">
+            <argument type="service" id="Psr\Http\Client\ClientInterface"/>
+            <argument type="service" id="Symfony\Component\Cache\Psr16Cache"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+        </service>
+
+        <service id="Shopware\App\SDK\Context\InAppPurchase\InAppPurchaseProvider">
+            <argument type="service" id="Shopware\App\SDK\Context\InAppPurchase\SBPStoreKeyFetcher"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+        </service>
+
+        <service id="Shopware\App\SDK\Context\ContextResolver">
+            <argument type="service" id="Shopware\App\SDK\Context\InAppPurchase\InAppPurchaseProvider"/>
+        </service>
 
         <service id="Shopware\App\SDK\Shop\ShopResolver">
             <argument type="service" id="Shopware\App\SDK\Shop\ShopRepositoryInterface"/>
