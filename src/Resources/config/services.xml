@@ -30,6 +30,10 @@
         <service id="Shopware\App\SDK\Authentication\RequestVerifier"/>
         <service id="Shopware\App\SDK\Authentication\ResponseSigner"/>
 
+        <service id="Symfony\Component\Cache\Psr16Cache">
+            <argument type="service" id="cache.app"/>
+        </service>
+
         <service id="Shopware\App\SDK\Context\InAppPurchase\SBPStoreKeyFetcher">
             <argument type="service" id="Psr\Http\Client\ClientInterface"/>
             <argument type="service" id="Symfony\Component\Cache\Psr16Cache"/>

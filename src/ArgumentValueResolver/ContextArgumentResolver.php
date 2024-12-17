@@ -121,7 +121,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
-            FilterAction::class => yield $this->contextResolver->assembleInAppFeatureFilterRequest($psrRequest, $shop),
+            FilterAction::class => yield $this->contextResolver->assembleInAppPurchasesFilterRequest($psrRequest, $shop),
             default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
         };
     }
