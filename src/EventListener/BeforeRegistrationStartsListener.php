@@ -33,7 +33,7 @@ class BeforeRegistrationStartsListener
         $shop = $event->getShop();
 
         try {
-            $this->httpClient->request('HEAD', $shop->getShopUrl(), [
+            $this->httpClient->request('HEAD', sprintf("%s/api/_info/config", $shop->getShopUrl()), [
                 'timeout' => 10,
                 'max_redirects' => 0,
             ]);
