@@ -59,7 +59,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $this->httpClient
             ->expects(self::once())
             ->method('request')
-            ->with('HEAD', 'https://shop-url.com', [
+            ->with('HEAD', 'https://shop-url.com/api/_info/config', [
                 'timeout' => 10,
                 'max_redirects' => 0,
             ]);
@@ -91,7 +91,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $this->httpClient
             ->expects(self::once())
             ->method('request')
-            ->with('HEAD', 'https://shop-url.com', [
+            ->with('HEAD', 'https://shop-url.com/api/_info/config', [
                 'timeout' => 10,
                 'max_redirects' => 0,
             ])
