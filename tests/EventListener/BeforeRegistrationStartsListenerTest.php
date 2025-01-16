@@ -54,7 +54,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $shop
             ->expects(self::once())
             ->method('getShopUrl')
-            ->willReturn('https://shop-url.com');
+            ->willReturn('https://shop-url.com/');
 
         $this->httpClient
             ->expects(self::once())
@@ -80,13 +80,13 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
     public function testListenerMustThrowExceptionBecauseTheShopURLIsNotReachable(): void
     {
         $this->expectException(ShopURLIsNotReachableException::class);
-        $this->expectExceptionMessage('Shop URL "https://shop-url.com" is not reachable from the application server.');
+        $this->expectExceptionMessage('Shop URL "https://shop-url.com/" is not reachable from the application server.');
 
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::exactly(2))
             ->method('getShopUrl')
-            ->willReturn('https://shop-url.com');
+            ->willReturn('https://shop-url.com/');
 
         $this->httpClient
             ->expects(self::once())
