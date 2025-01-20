@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EventListener;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -12,6 +13,11 @@ use Shopware\App\SDK\Event\BeforeRegistrationStartsEvent;
 use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener;
 use Shopware\AppBundle\Exception\ShopURLIsNotReachableException;
+use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(BeforeRegistrationStartsListener::class)]
@@ -95,7 +101,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
                 'timeout' => 10,
                 'max_redirects' => 0,
             ])
-            ->willThrowException(new \Exception('Shop url is not reachable'));
+            ->willThrowException(new TransportException('Shop is not reachable'));
 
         $listener = new BeforeRegistrationStartsListener(
             $this->httpClient,
@@ -108,5 +114,49 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
                 $shop
             )
         );
+    }
+
+    #[DataProvider('unauthorizedHttpExceptionProvider')]
+    public function testListenerDoesNotThrowExceptionWhenTheExceptionCodeIsHTTPUnauthorized($exception): void
+    {
+        $shop = $this->createMock(ShopInterface::class);
+        $shop
+            ->expects(self::once())
+            ->method('getShopUrl')
+            ->willReturn('https://shop-url.com');
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('request')
+            ->with('HEAD', 'https://shop-url.com/api/_info/config', [
+                'timeout' => 10,
+                'max_redirects' => 0,
+            ])
+            ->willThrowException($exception);
+
+        $listener = new BeforeRegistrationStartsListener(
+            $this->httpClient,
+            true
+        );
+
+        $listener->__invoke(
+            new BeforeRegistrationStartsEvent(
+                $this->createMock(RequestInterface::class),
+                $shop
+            )
+        );
+    }
+
+    public static function unauthorizedHttpExceptionProvider(): \Generator
+    {
+        yield 'HttpException' => [
+            new UnauthorizedHttpException('Unauthorized')
+        ];
+
+        yield 'HttpExceptionInterface' => [
+            new ClientException(new MockResponse('', [
+                'http_code' => Response::HTTP_UNAUTHORIZED,
+            ]))
+        ];
     }
 }
