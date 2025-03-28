@@ -8,6 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
+use Shopware\App\SDK\Context\Gateway\Context\ContextGatewayAction;
 use Shopware\App\SDK\Context\Gateway\InAppFeatures\FilterAction;
 use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
@@ -42,6 +43,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         RefundAction::class => true,
         StorefrontAction::class => true,
         CheckoutGatewayAction::class => true,
+        ContextGatewayAction::class => true,
         FilterAction::class => true,
     ];
 
@@ -54,6 +56,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentCaptureAction::class => true,
         RefundAction::class => true,
         CheckoutGatewayAction::class => true,
+        ContextGatewayAction::class => true,
     ];
 
     public function __construct(
@@ -121,6 +124,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
+            ContextGatewayAction::class => yield $this->contextResolver->assembleContextGatewayRequest($psrRequest, $shop),
             FilterAction::class => yield $this->contextResolver->assembleInAppPurchasesFilterRequest($psrRequest, $shop),
             default => throw new \RuntimeException(sprintf('Unsupported type %s', $type)),
         };
