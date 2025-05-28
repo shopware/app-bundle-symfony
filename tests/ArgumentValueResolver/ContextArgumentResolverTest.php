@@ -13,6 +13,7 @@ use Shopware\App\SDK\Authentication\RequestVerifier;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
+use Shopware\App\SDK\Context\Gateway\Context\ContextGatewayAction;
 use Shopware\App\SDK\Context\Gateway\InAppFeatures\FilterAction;
 use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
@@ -239,6 +240,7 @@ class ContextArgumentResolverTest extends TestCase
         yield [RefundAction::class];
         yield [StorefrontAction::class];
         yield [CheckoutGatewayAction::class];
+        yield [ContextGatewayAction::class];
         yield [FilterAction::class];
     }
 
@@ -272,6 +274,8 @@ class ContextArgumentResolverTest extends TestCase
         yield [WebhookAction::class, false];
         yield [ModuleAction::class, false];
         yield [StorefrontAction::class, false];
+        yield [CheckoutGatewayAction::class, true];
+        yield [ContextGatewayAction::class, true];
     }
 
     #[DataProvider('provideSigningActions')]
