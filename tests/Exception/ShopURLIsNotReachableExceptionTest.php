@@ -24,5 +24,7 @@ class ShopURLIsNotReachableExceptionTest extends TestCase
             ),
             $exception->getMessage()
         );
+
+        static::assertSame(0, $exception->getCode());
     }
 }
