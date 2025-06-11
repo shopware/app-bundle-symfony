@@ -14,6 +14,7 @@ use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener;
 use Shopware\AppBundle\Exception\ShopURLIsNotReachableException;
 use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -102,6 +103,39 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
                 'max_redirects' => 0,
             ])
             ->willThrowException(new TransportException('Shop is not reachable'));
+
+        $listener = new BeforeRegistrationStartsListener(
+            $this->httpClient,
+            true
+        );
+
+        $listener->__invoke(
+            new BeforeRegistrationStartsEvent(
+                $this->createMock(RequestInterface::class),
+                $shop
+            )
+        );
+    }
+
+    public function testListenerMustThrowExceptionBecauseTheShopURLRedirectsToAnotherURL(): void
+    {
+        $this->expectException(ShopURLIsNotReachableException::class);
+        $this->expectExceptionMessage('Shop URL "https://shop-url.com" is not reachable from the application server.');
+
+        $shop = $this->createMock(ShopInterface::class);
+        $shop
+            ->expects(self::exactly(2))
+            ->method('getShopUrl')
+            ->willReturn('https://shop-url.com');
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('request')
+            ->with('HEAD', 'https://shop-url.com/api/_info/config', [
+                'timeout' => 10,
+                'max_redirects' => 0,
+            ])
+            ->willThrowException(new RedirectionException(new MockResponse()));
 
         $listener = new BeforeRegistrationStartsListener(
             $this->httpClient,
