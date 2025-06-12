@@ -7,6 +7,7 @@ namespace Shopware\AppBundle\EventListener;
 use Shopware\App\SDK\Event\BeforeRegistrationStartsEvent;
 use Shopware\AppBundle\Exception\ShopURLIsNotReachableException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -39,7 +40,7 @@ class BeforeRegistrationStartsListener
                 'max_redirects' => 0,
             ]);
         } catch (\Throwable $e) {
-            if (!$e instanceof TransportExceptionInterface) {
+            if (!$e instanceof TransportExceptionInterface && !$e instanceof RedirectionException) {
                 return;
             }
 
