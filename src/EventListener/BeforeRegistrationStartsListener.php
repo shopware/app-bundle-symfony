@@ -33,9 +33,10 @@ class BeforeRegistrationStartsListener
         }
 
         $shop = $event->getShop();
+        $url = rtrim($shop->getShopUrl(), '/');
 
         try {
-            $this->httpClient->request('HEAD', sprintf("%s/api/_info/config", $shop->getShopUrl()), [
+            $this->httpClient->request('HEAD', sprintf("%s/api/_info/config", $url), [
                 'timeout' => 10,
                 'max_redirects' => 0,
             ]);
@@ -44,7 +45,7 @@ class BeforeRegistrationStartsListener
                 return;
             }
 
-            throw new ShopURLIsNotReachableException($shop->getShopUrl(), $e);
+            throw new ShopURLIsNotReachableException($url, $e);
         }
     }
 }
