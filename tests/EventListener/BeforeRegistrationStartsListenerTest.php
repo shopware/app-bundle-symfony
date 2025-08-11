@@ -91,7 +91,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
 
         $shop = $this->createMock(ShopInterface::class);
         $shop
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getShopUrl')
             ->willReturn('https://shop-url.com');
 
@@ -124,7 +124,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
 
         $shop = $this->createMock(ShopInterface::class);
         $shop
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getShopUrl')
             ->willReturn('https://shop-url.com');
 
@@ -136,6 +136,35 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
                 'max_redirects' => 0,
             ])
             ->willThrowException(new RedirectionException(new MockResponse()));
+
+        $listener = new BeforeRegistrationStartsListener(
+            $this->httpClient,
+            true
+        );
+
+        $listener->__invoke(
+            new BeforeRegistrationStartsEvent(
+                $this->createMock(RequestInterface::class),
+                $shop
+            )
+        );
+    }
+
+    public function testRequestSentWithoutDoubleBackslash()
+    {
+        $shop = $this->createMock(ShopInterface::class);
+        $shop
+            ->expects(self::once())
+            ->method('getShopUrl')
+            ->willReturn('https://shop-url.com/');
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('request')
+            ->with('HEAD', 'https://shop-url.com/api/_info/config', [
+                'timeout' => 10,
+                'max_redirects' => 0,
+            ]);
 
         $listener = new BeforeRegistrationStartsListener(
             $this->httpClient,
