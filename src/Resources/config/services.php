@@ -18,6 +18,7 @@ return static function (ContainerConfigurator $container) {
             '',
             '',
             service(\Symfony\Component\Routing\Generator\UrlGeneratorInterface::class),
+            false,
         ]);
 
     $services->set(\Shopware\App\SDK\HttpClient\ClientFactory::class);
@@ -35,6 +36,10 @@ return static function (ContainerConfigurator $container) {
         ]);
 
     $services->set(\Shopware\App\SDK\Authentication\RequestVerifier::class);
+    $services->set(\Shopware\App\SDK\Authentication\DualSignatureRequestVerifier::class)
+        ->args([
+            service(\Shopware\App\SDK\Authentication\RequestVerifier::class),
+        ]);
 
     $services->set(\Shopware\App\SDK\Authentication\ResponseSigner::class);
 
@@ -64,7 +69,7 @@ return static function (ContainerConfigurator $container) {
         ->args([
             service(\Shopware\App\SDK\AppConfiguration::class),
             service(\Shopware\App\SDK\Shop\ShopRepositoryInterface::class),
-            service(\Shopware\App\SDK\Authentication\RequestVerifier::class),
+            service(\Shopware\App\SDK\Authentication\DualSignatureRequestVerifier::class),
             service(\Shopware\App\SDK\Authentication\ResponseSigner::class),
             service(\Shopware\App\SDK\Registration\ShopSecretGeneratorInterface::class),
             service(\Psr\Log\LoggerInterface::class),

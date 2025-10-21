@@ -9,7 +9,7 @@ use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
-use Shopware\App\SDK\Authentication\RequestVerifier;
+use Shopware\App\SDK\Authentication\DualSignatureRequestVerifier;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
@@ -175,7 +175,7 @@ class ContextArgumentResolverTest extends TestCase
     public function testShopResolved(): void
     {
         $repository = new MockShopRepository();
-        $shopResolver = new ShopResolver($repository, static::createMock(RequestVerifier::class));
+        $shopResolver = new ShopResolver($repository, static::createMock(DualSignatureRequestVerifier::class));
 
         $shop = new MockShop('123', 'http://example.com', 'secret');
 

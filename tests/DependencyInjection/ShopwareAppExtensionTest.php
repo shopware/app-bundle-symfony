@@ -52,7 +52,7 @@ class ShopwareAppExtensionTest extends TestCase
         static::assertTrue($container->hasDefinition(AppConfigurationFactory::class));
 
         static::assertCount(2, $container->getDefinition(ShopRepositoryInterface::class)->getArguments());
-        static::assertCount(4, $container->getDefinition(AppConfigurationFactory::class)->getArguments());
+        static::assertCount(5, $container->getDefinition(AppConfigurationFactory::class)->getArguments());
 
         $shopClass = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(0);
 
@@ -77,7 +77,7 @@ class ShopwareAppExtensionTest extends TestCase
         static::assertTrue($container->hasDefinition(AppConfigurationFactory::class));
 
         static::assertCount(2, $container->getDefinition(ShopRepositoryInterface::class)->getArguments());
-        static::assertCount(4, $container->getDefinition(AppConfigurationFactory::class)->getArguments());
+        static::assertCount(5, $container->getDefinition(AppConfigurationFactory::class)->getArguments());
 
         $shopClass = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(0);
 
