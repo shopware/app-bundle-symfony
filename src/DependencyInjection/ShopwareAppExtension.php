@@ -14,7 +14,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
 final class ShopwareAppExtension extends Extension
@@ -23,12 +23,12 @@ final class ShopwareAppExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new XmlFileLoader(
+        $loader = new PhpFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.xml');
+        $loader->load('services.php');
 
         $storage = $config['storage'];
 
