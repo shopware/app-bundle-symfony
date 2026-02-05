@@ -51,6 +51,9 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->booleanNode('check_if_shop_url_is_reachable')
                 ->defaultFalse()
+                ->end()
+            ->booleanNode('enforce_double_signature')
+                ->defaultFalse()
                 ->end();
 
         return $treeBuilder;

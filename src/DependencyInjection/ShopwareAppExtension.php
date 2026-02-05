@@ -56,7 +56,8 @@ final class ShopwareAppExtension extends Extension
         $container->getDefinition(AppConfigurationFactory::class)
             ->replaceArgument(0, $config['name'])
             ->replaceArgument(1, $config['secret'])
-            ->replaceArgument(2, $config['confirmation_url']);
+            ->replaceArgument(2, $config['confirmation_url'])
+            ->replaceArgument(4, $config['enforce_double_signature']);
 
         $container->setParameter(
             sprintf('%s.check_if_shop_url_is_reachable', Configuration::EXTENSION_ALIAS),

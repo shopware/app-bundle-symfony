@@ -13,7 +13,8 @@ final class AppConfigurationFactory
         private readonly string $appName,
         private readonly string $appSecret,
         private readonly string $shopwareAppConfirmUrl,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly bool $enforceDoubleSignature
     ) {
     }
 
@@ -22,7 +23,8 @@ final class AppConfigurationFactory
         return new AppConfiguration(
             $this->appName,
             $this->appSecret,
-            $this->urlGenerator->generate($this->shopwareAppConfirmUrl, [], UrlGeneratorInterface::ABSOLUTE_URL)
+            $this->urlGenerator->generate($this->shopwareAppConfirmUrl, [], UrlGeneratorInterface::ABSOLUTE_URL),
+            $this->enforceDoubleSignature
         );
     }
 }

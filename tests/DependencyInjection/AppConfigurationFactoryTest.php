@@ -24,7 +24,8 @@ class AppConfigurationFactoryTest extends TestCase
             'name',
             'secret',
             'test.route',
-            $urlGenerator
+            $urlGenerator,
+            true
         );
 
         $config = $factory->newConfiguration();
