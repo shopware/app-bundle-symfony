@@ -60,7 +60,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::once())
-            ->method('getShopUrl')
+            ->method('getPendingShopUrl')
             ->willReturn('https://shop-url.com');
 
         $this->httpClient
@@ -92,7 +92,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::once())
-            ->method('getShopUrl')
+            ->method('getPendingShopUrl')
             ->willReturn('https://shop-url.com');
 
         $this->httpClient
@@ -125,7 +125,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::once())
-            ->method('getShopUrl')
+            ->method('getPendingShopUrl')
             ->willReturn('https://shop-url.com');
 
         $this->httpClient
@@ -150,12 +150,37 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         );
     }
 
+    public function testListenerMustReturnWhenPendingShopUrlIsNull(): void
+    {
+        $shop = $this->createMock(ShopInterface::class);
+        $shop
+            ->expects(self::once())
+            ->method('getPendingShopUrl')
+            ->willReturn(null);
+
+        $this->httpClient
+            ->expects(self::never())
+            ->method('request');
+
+        $listener = new BeforeRegistrationStartsListener(
+            $this->httpClient,
+            true
+        );
+
+        $listener->__invoke(
+            new BeforeRegistrationStartsEvent(
+                $this->createMock(RequestInterface::class),
+                $shop
+            )
+        );
+    }
+
     public function testRequestSentWithoutDoubleBackslash()
     {
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::once())
-            ->method('getShopUrl')
+            ->method('getPendingShopUrl')
             ->willReturn('https://shop-url.com/');
 
         $this->httpClient
@@ -185,7 +210,7 @@ final class BeforeRegistrationStartsListenerTest extends TestCase
         $shop = $this->createMock(ShopInterface::class);
         $shop
             ->expects(self::once())
-            ->method('getShopUrl')
+            ->method('getPendingShopUrl')
             ->willReturn('https://shop-url.com');
 
         $this->httpClient

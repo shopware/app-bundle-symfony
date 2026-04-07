@@ -33,7 +33,13 @@ class BeforeRegistrationStartsListener
         }
 
         $shop = $event->getShop();
-        $url = rtrim($shop->getShopUrl(), '/');
+        $pendingUrl = $shop->getPendingShopUrl();
+
+        if ($pendingUrl === null) {
+            return;
+        }
+
+        $url = rtrim($pendingUrl, '/');
 
         try {
             $this->httpClient->request('HEAD', sprintf("%s/api/_info/config", $url), [
