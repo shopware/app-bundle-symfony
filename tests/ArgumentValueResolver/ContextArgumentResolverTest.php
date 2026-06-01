@@ -19,6 +19,7 @@ use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
 use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
 use Shopware\App\SDK\Context\Payment\PaymentPayAction;
+use Shopware\App\SDK\Context\Payment\PaymentRecurringAction;
 use Shopware\App\SDK\Context\Payment\PaymentValidateAction;
 use Shopware\App\SDK\Context\Payment\RefundAction;
 use Shopware\App\SDK\Context\Storefront\StorefrontAction;
@@ -237,6 +238,7 @@ class ContextArgumentResolverTest extends TestCase
         yield [PaymentFinalizeAction::class];
         yield [PaymentValidateAction::class];
         yield [PaymentCaptureAction::class];
+        yield [PaymentRecurringAction::class];
         yield [RefundAction::class];
         yield [StorefrontAction::class];
         yield [CheckoutGatewayAction::class];
@@ -270,6 +272,7 @@ class ContextArgumentResolverTest extends TestCase
         yield [PaymentFinalizeAction::class, true];
         yield [PaymentValidateAction::class, true];
         yield [PaymentCaptureAction::class, true];
+        yield [PaymentRecurringAction::class, true];
         yield [RefundAction::class, true];
         yield [WebhookAction::class, false];
         yield [ModuleAction::class, false];

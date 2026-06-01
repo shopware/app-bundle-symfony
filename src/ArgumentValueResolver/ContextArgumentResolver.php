@@ -14,6 +14,7 @@ use Shopware\App\SDK\Context\Module\ModuleAction;
 use Shopware\App\SDK\Context\Payment\PaymentCaptureAction;
 use Shopware\App\SDK\Context\Payment\PaymentFinalizeAction;
 use Shopware\App\SDK\Context\Payment\PaymentPayAction;
+use Shopware\App\SDK\Context\Payment\PaymentRecurringAction;
 use Shopware\App\SDK\Context\Payment\PaymentValidateAction;
 use Shopware\App\SDK\Context\Payment\RefundAction;
 use Shopware\App\SDK\Context\Storefront\StorefrontAction;
@@ -40,6 +41,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentFinalizeAction::class => true,
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
+        PaymentRecurringAction::class => true,
         RefundAction::class => true,
         StorefrontAction::class => true,
         CheckoutGatewayAction::class => true,
@@ -54,6 +56,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
         PaymentFinalizeAction::class => true,
         PaymentValidateAction::class => true,
         PaymentCaptureAction::class => true,
+        PaymentRecurringAction::class => true,
         RefundAction::class => true,
         CheckoutGatewayAction::class => true,
         ContextGatewayAction::class => true,
@@ -121,6 +124,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
             PaymentFinalizeAction::class => yield $this->contextResolver->assemblePaymentFinalize($psrRequest, $shop),
             PaymentValidateAction::class => yield $this->contextResolver->assemblePaymentValidate($psrRequest, $shop),
             PaymentCaptureAction::class => yield $this->contextResolver->assemblePaymentCapture($psrRequest, $shop),
+            PaymentRecurringAction::class => yield $this->contextResolver->assemblePaymentRecurringCapture($psrRequest, $shop),
             RefundAction::class => yield $this->contextResolver->assemblePaymentRefund($psrRequest, $shop),
             StorefrontAction::class => yield $this->contextResolver->assembleStorefrontRequest($psrRequest, $shop),
             CheckoutGatewayAction::class => yield $this->contextResolver->assembleCheckoutGatewayRequest($psrRequest, $shop),
