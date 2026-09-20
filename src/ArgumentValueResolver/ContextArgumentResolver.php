@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\ArgumentValueResolver;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Shopware\App\SDK\Context\ActionButton\ActionButtonAction;
 use Shopware\App\SDK\Context\ContextResolver;
 use Shopware\App\SDK\Context\Gateway\Checkout\CheckoutGatewayAction;
@@ -23,7 +24,8 @@ use Shopware\App\SDK\Context\Webhook\WebhookAction;
 use Shopware\App\SDK\Shop\ShopInterface;
 use Shopware\App\SDK\Shop\ShopResolver;
 use Shopware\AppBundle\AppRequest;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Shopware\AppBundle\PsrRequestProvider;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -32,6 +34,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
 {
     private const SUPPORTED_TYPES = [
         RequestInterface::class => true,
+        ServerRequestInterface::class => true,
         ShopInterface::class => true,
         WebhookAction::class => true,
         ModuleAction::class => true,
@@ -65,7 +68,7 @@ final class ContextArgumentResolver implements ValueResolverInterface
     public function __construct(
         private readonly ContextResolver $contextResolver,
         private readonly ShopResolver $shopResolver,
-        private readonly HttpMessageFactoryInterface $httpFoundationFactory
+        private readonly PsrRequestProvider $psrRequestProvider
     ) {
     }
 
@@ -76,25 +79,22 @@ final class ContextArgumentResolver implements ValueResolverInterface
 
     /**
      * @return iterable<object>
+     *
+     * @throws JsonException if the request announces JSON but the body does not decode to an array
      * @throws \JsonException|\RuntimeException
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        if(!$this->supports($request, $argument)) {
+        if (!$this->supports($request, $argument)) {
             return;
         }
 
-        $psrRequest = $request->attributes->get(AppRequest::PSR_REQUEST_ATTRIBUTE);
-
-        if (!$psrRequest instanceof RequestInterface) {
-            $psrRequest = $this->httpFoundationFactory->createRequest($request);
-            $request->attributes->set(AppRequest::PSR_REQUEST_ATTRIBUTE, $psrRequest);
-        }
+        $psrRequest = $this->psrRequestProvider->get($request);
 
         /** @var class-string $type */
         $type = $argument->getType();
 
-        if ($type === RequestInterface::class) {
+        if ($type === RequestInterface::class || $type === ServerRequestInterface::class) {
             yield $psrRequest;
             return;
         }
