@@ -10,9 +10,12 @@ use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBShop;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
+use Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver;
 use Shopware\AppBundle\DependencyInjection\AppConfigurationFactory;
 use Shopware\AppBundle\DependencyInjection\ShopwareAppExtension;
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\PsrRequestProvider;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -29,6 +32,24 @@ class ShopwareAppExtensionTest extends TestCase
         static::assertSame(DynamoDBRepository::class, $container->getDefinition(ShopRepositoryInterface::class)->getClass());
 
         static::assertTrue($container->hasParameter('shopware_app.check_if_shop_url_is_reachable'));
+    }
+
+    public function testPsrRequestProviderIsRegistered(): void
+    {
+        $extension = new ShopwareAppExtension();
+        $container = new ContainerBuilder();
+        $extension->load([], $container);
+
+        // ContextArgumentResolver is autowired, so the container only compiles
+        // when PsrRequestProvider has a definition of its own.
+        static::assertTrue($container->hasDefinition(ContextArgumentResolver::class));
+        static::assertTrue($container->hasDefinition(PsrRequestProvider::class));
+        static::assertTrue($container->hasDefinition(HttpMessageFactoryInterface::class));
+
+        $factory = $container->getDefinition(PsrRequestProvider::class)->getArgument(0);
+
+        static::assertInstanceOf(Reference::class, $factory);
+        static::assertSame(HttpMessageFactoryInterface::class, $factory->__toString());
     }
 
     public function testDefaultInMemory(): void

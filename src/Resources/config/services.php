@@ -108,5 +108,10 @@ return static function (ContainerConfigurator $container) {
 
     $services->set(\Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface::class, \Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory::class);
 
+    $services->set(\Shopware\AppBundle\PsrRequestProvider::class)
+        ->args([
+            service(\Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface::class),
+        ]);
+
     $services->set(\Symfony\Bridge\PsrHttpMessage\EventListener\PsrResponseListener::class);
 };
