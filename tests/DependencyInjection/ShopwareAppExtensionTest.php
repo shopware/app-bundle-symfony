@@ -8,16 +8,21 @@ use AsyncAws\DynamoDb\DynamoDbClient;
 use PHPUnit\Framework\TestCase;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBShop;
+use Shopware\App\SDK\HttpClient\ClientFactory;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\ArgumentValueResolver\ContextArgumentResolver;
 use Shopware\AppBundle\DependencyInjection\AppConfigurationFactory;
 use Shopware\AppBundle\DependencyInjection\ShopwareAppExtension;
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener;
+use Shopware\AppBundle\HttpClient\ShopUrlGuardHttpClient;
+use Shopware\AppBundle\HttpClient\ShutdownCancellingHttpClient;
 use Shopware\AppBundle\PsrRequestProvider;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpClient\Psr18Client;
 
 class ShopwareAppExtensionTest extends TestCase
 {
@@ -148,5 +153,57 @@ class ShopwareAppExtensionTest extends TestCase
         $shopClass = $container->getDefinition(ShopRepositoryInterface::class)->getArgument(1);
 
         static::assertSame('foo', $shopClass);
+    }
+
+    public function testSdkAndReachabilityCheckReachShopsThroughTheShopHttpClient(): void
+    {
+        $container = new ContainerBuilder();
+        (new ShopwareAppExtension())->load([], $container);
+
+        $psr18Client = $container->getDefinition(ShopwareAppExtension::SHOP_PSR18_CLIENT);
+        static::assertSame(Psr18Client::class, $psr18Client->getClass());
+        static::assertEquals([new Reference(ShopwareAppExtension::SHOP_HTTP_CLIENT)], $psr18Client->getArguments());
+
+        static::assertEquals(
+            new Reference(ShopwareAppExtension::SHOP_PSR18_CLIENT),
+            $container->getDefinition(ClientFactory::class)->getArgument('$client')
+        );
+        static::assertEquals(
+            new Reference(ShopwareAppExtension::SHOP_HTTP_CLIENT),
+            $container->getDefinition(BeforeRegistrationStartsListener::class)->getArgument(0)
+        );
+    }
+
+    public function testShopHttpClientIsTheBaseClientWhenNothingIsConfigured(): void
+    {
+        $container = new ContainerBuilder();
+        (new ShopwareAppExtension())->load([], $container);
+
+        static::assertSame('http_client', (string) $container->getAlias(ShopwareAppExtension::SHOP_HTTP_CLIENT));
+
+        $cancelling = $container->getDefinition('shopware_app.shop_http_client.cancel_on_shutdown');
+        static::assertSame(ShutdownCancellingHttpClient::class, $cancelling->getClass());
+        static::assertSame([ShopwareAppExtension::SHOP_HTTP_CLIENT, null, 32], $cancelling->getDecoratedService());
+        static::assertEquals([new Reference('.inner')], $cancelling->getArguments());
+
+        static::assertFalse($container->hasDefinition('shopware_app.shop_http_client.url_guard'));
+    }
+
+    public function testShopHttpClientStacksTheConfiguredDecorators(): void
+    {
+        $container = new ContainerBuilder();
+        (new ShopwareAppExtension())->load([['shop_http_client' => [
+            'base_client' => 'shop.base_client',
+            'url_guard' => ['enabled' => true, 'max_redirects' => 3, 'max_response_bytes' => 1024],
+        ]]], $container);
+
+        static::assertSame('shop.base_client', (string) $container->getAlias(ShopwareAppExtension::SHOP_HTTP_CLIENT));
+        static::assertTrue($container->hasDefinition('shopware_app.shop_http_client.cancel_on_shutdown'));
+
+        $guard = $container->getDefinition('shopware_app.shop_http_client.url_guard');
+        static::assertSame(ShopUrlGuardHttpClient::class, $guard->getClass());
+        static::assertSame([ShopwareAppExtension::SHOP_HTTP_CLIENT, null, 16], $guard->getDecoratedService());
+        static::assertEquals([new Reference('.inner'), 3, 1024], $guard->getArguments());
+        static::assertSame([['method' => 'reset']], $guard->getTag('kernel.reset'));
     }
 }
