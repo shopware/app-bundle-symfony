@@ -10,6 +10,8 @@ use Shopware\App\SDK\Adapter\DynamoDB\DynamoDBRepository;
 use Shopware\App\SDK\Shop\ShopRepositoryInterface;
 use Shopware\App\SDK\Test\MockShopRepository;
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\HttpClient\ShopUrlGuardHttpClient;
+use Shopware\AppBundle\HttpClient\ShutdownCancellingHttpClient;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -19,6 +21,16 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class ShopwareAppExtension extends Extension
 {
+    /**
+     * The Symfony HTTP client for requests to shops, as configured under `shopware_app.shop_http_client`.
+     */
+    public const SHOP_HTTP_CLIENT = 'shopware_app.shop_http_client';
+
+    /**
+     * {@see self::SHOP_HTTP_CLIENT} as a PSR-18 client, which the SDK's ClientFactory sends with.
+     */
+    public const SHOP_PSR18_CLIENT = 'shopware_app.shop_http_client.psr18';
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
@@ -63,5 +75,33 @@ final class ShopwareAppExtension extends Extension
             sprintf('%s.check_if_shop_url_is_reachable', Configuration::EXTENSION_ALIAS),
             $config['check_if_shop_url_is_reachable']
         );
+
+        $this->loadShopHttpClient($config['shop_http_client'], $container);
+    }
+
+    /**
+     * Decorators of the shop client take a priority from this range, the higher the closer to the base client:
+     * 32 cancels on shutdown, 16 guards the URL.
+     *
+     * @param array{base_client: string, url_guard: array{enabled: bool, max_redirects: int, max_response_bytes: int}} $config
+     */
+    private function loadShopHttpClient(array $config, ContainerBuilder $container): void
+    {
+        $container->setAlias(self::SHOP_HTTP_CLIENT, $config['base_client']);
+
+        $container->register(self::SHOP_HTTP_CLIENT . '.cancel_on_shutdown', ShutdownCancellingHttpClient::class)
+            ->setDecoratedService(self::SHOP_HTTP_CLIENT, null, 32)
+            ->setArguments([new Reference('.inner')]);
+
+        if ($config['url_guard']['enabled']) {
+            $container->register(self::SHOP_HTTP_CLIENT . '.url_guard', ShopUrlGuardHttpClient::class)
+                ->setDecoratedService(self::SHOP_HTTP_CLIENT, null, 16)
+                ->setArguments([
+                    new Reference('.inner'),
+                    $config['url_guard']['max_redirects'],
+                    $config['url_guard']['max_response_bytes'],
+                ])
+                ->addTag('kernel.reset', ['method' => 'reset']);
+        }
     }
 }

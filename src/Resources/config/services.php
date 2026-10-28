@@ -21,7 +21,13 @@ return static function (ContainerConfigurator $container) {
             false,
         ]);
 
-    $services->set(\Shopware\App\SDK\HttpClient\ClientFactory::class);
+    // The shop client itself is set up by \Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::load
+    $services->set(\Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::SHOP_PSR18_CLIENT, \Symfony\Component\HttpClient\Psr18Client::class)
+        ->autowire(false)
+        ->args([service(\Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::SHOP_HTTP_CLIENT)]);
+
+    $services->set(\Shopware\App\SDK\HttpClient\ClientFactory::class)
+        ->arg('$client', service(\Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::SHOP_PSR18_CLIENT));
 
     $services->set(\Shopware\App\SDK\AppConfiguration::class)
         ->factory([service(\Shopware\AppBundle\DependencyInjection\AppConfigurationFactory::class), 'newConfiguration']);
@@ -100,7 +106,7 @@ return static function (ContainerConfigurator $container) {
 
     $services->set(\Shopware\AppBundle\EventListener\BeforeRegistrationStartsListener::class)
         ->args([
-            service(\Symfony\Contracts\HttpClient\HttpClientInterface::class),
+            service(\Shopware\AppBundle\DependencyInjection\ShopwareAppExtension::SHOP_HTTP_CLIENT),
             '%shopware_app.check_if_shop_url_is_reachable%',
         ]);
 

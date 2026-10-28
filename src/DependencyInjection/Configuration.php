@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopware\AppBundle\DependencyInjection;
 
 use Shopware\AppBundle\Entity\AbstractShop;
+use Shopware\AppBundle\HttpClient\ShopUrlGuardHttpClient;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -54,7 +55,33 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->booleanNode('enforce_double_signature')
                 ->defaultFalse()
-                ->end();
+                ->end()
+            ->arrayNode('shop_http_client')
+                ->info('The HTTP client the app reaches shops with, through the SDK\'s ClientFactory and the shop URL reachability check.')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('base_client')
+                        ->info('Service id of the Symfony HTTP client the shop client is built on.')
+                        ->defaultValue('http_client')
+                        ->cannotBeEmpty()
+                    ->end()
+                    ->arrayNode('url_guard')
+                        ->info('Refuses private and reserved addresses and plain http on every redirect hop, and caps redirects and the response size. A shop URL is supplied by whoever installs the app.')
+                        ->canBeEnabled()
+                        ->children()
+                            ->integerNode('max_redirects')
+                                ->min(0)
+                                ->defaultValue(ShopUrlGuardHttpClient::MAX_REDIRECTS)
+                            ->end()
+                            ->integerNode('max_response_bytes')
+                                ->info('Counts the bytes as received, before decompression, so a compressed response can decode to more.')
+                                ->min(1)
+                                ->defaultValue(ShopUrlGuardHttpClient::MAX_RESPONSE_BYTES)
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

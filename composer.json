@@ -23,7 +23,9 @@
         "symfony/psr-http-message-bridge": "^6.4 || ^7.0 || ^8.0",
         "symfony/routing": "^6.4 || ^7.0 || ^8.0",
         "shopware/app-php-sdk": ">=5.0.0",
-        "symfony/http-client": "^6.4 || ^7.0 || ^8.0",
+        "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+        "symfony/http-client": "^6.4.17 || ~7.1.10 || ^7.2.2 || ^8.0",
+        "symfony/http-foundation": "^6.4 || ^7.0 || ^8.0",
         "nyholm/psr7": "^1.8"
     },
     "require-dev": {
