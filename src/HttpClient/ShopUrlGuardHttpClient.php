@@ -29,6 +29,8 @@ final class ShopUrlGuardHttpClient implements HttpClientInterface, ResetInterfac
 
     /**
      * Roomy enough for a real entity-search result set, while still bounding one response.
+     *
+     * Counts the bytes as received, before decompression, so a compressed response can decode to more.
      */
     public const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
 

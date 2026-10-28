@@ -74,6 +74,7 @@ final class Configuration implements ConfigurationInterface
                                 ->defaultValue(ShopUrlGuardHttpClient::MAX_REDIRECTS)
                             ->end()
                             ->integerNode('max_response_bytes')
+                                ->info('Counts the bytes as received, before decompression, so a compressed response can decode to more.')
                                 ->min(1)
                                 ->defaultValue(ShopUrlGuardHttpClient::MAX_RESPONSE_BYTES)
                             ->end()
